@@ -1,48 +1,84 @@
-from tkinter import *
+import tkinter as tk
+import tkinter.ttk as ttk
+from ttkthemes import ThemedTk
 
-def save_info():
-  firstname_info = firstname.get()
-  lastname_info = lastname.get()
-  age_info = age.get()
-  age_info = str(age_info)
-  print(firstname_info, lastname_info, age_info)
+def criar():
+    # Get the filled text
+    o_que_text_value = o_que_text.get("1.0", "end-1c")
+    pra_que_text_value = pra_que_text.get("1.0", "end-1c")
+    como_text_value = como_text.get("1.0", "end-1c")
+    materia_entry_value = materia_entry.get()
+    turma_entry_value = turma_entry.get()
+    sequencia_entry_value = sequencia_entry.get()
+    conteudo_entry_value = conteudo_entry.get()
 
-  file = open("user.txt", "w")
-  file.write(firstname_info)
-  file.write(lastname_info)
-  file.write(age_info)
-  file.close()
-  print(" User ", firstname_info, " has been registered successfully")
+    # Store the text in a list or perform any other desired action
+    filled_text = [o_que_text_value, pra_que_text_value, como_text_value,
+                   materia_entry_value, turma_entry_value, sequencia_entry_value,
+                   conteudo_entry_value]
+    print(filled_text)  # Example: Print the filled text
 
-  firstname_entry.delete(0, END)
-  lastname_entry.delete(0, END)
-  age_entry.delete(0, END)
-  
-screen = Tk()
-screen.geometry("500x500")
-screen.title("Python Form")
-heading = Label(text = "Python Form", bg = "grey", fg = "black", width = "500", height = "3")
-heading.pack()
- 
-firstname_text = Label(text = "Firstname * ",)
-lastname_text = Label(text = "Lastname * ",)
-age_text = Label(text = "Age * ",)
-firstname_text.place(x = 15, y = 70)
-lastname_text.place(x = 15, y = 140)
-age_text.place(x = 15, y = 210)
+# Create the main window
+window = ThemedTk(theme="breeze")  # Specify the theme name
+window.title("Preenchedor de ficha")
 
+frame = ttk.Frame(window)
+frame.pack(padx=20, pady=10)
 
-firstname = StringVar()
-lastname = StringVar()
-age = IntVar()
+# Saving User Info
+user_info_frame = ttk.LabelFrame(frame, text="")
+user_info_frame.grid(row=1, column=0, padx=20, pady=10)
 
-firstname_entry = Entry(textvariable = firstname, width = "30")
-lastname_entry = Entry(textvariable = lastname, width = "30")
-age_entry = Entry(textvariable = age, width = "30")
+materia_label = ttk.Label(user_info_frame, text="Matéria", font=("Arial", 12, "bold"))
+materia_label.grid(row=0, column=0, padx=5, pady=5)
+materia_entry = ttk.Entry(user_info_frame)
+materia_entry.grid(row=0, column=1, padx=5, pady=5)
 
-firstname_entry.place(x = 15, y = 100)
-lastname_entry.place(x = 15, y = 180)
-age_entry.place(x = 15, y = 240)
+turma_label = ttk.Label(user_info_frame, text="Turma/Ano", font=("Arial", 12, "bold"))
+turma_label.grid(row=1, column=0, padx=5, pady=5)
+turma_entry = ttk.Entry(user_info_frame)
+turma_entry.grid(row=1, column=1, padx=5, pady=5)
 
-register = Button(screen,text = "Register", width = "30", height = "2", command = save_info, bg = "grey")
-register.place(x = 15, y = 290)
+sequencia_label = ttk.Label(user_info_frame, text="Sequência", font=("Arial", 12, "bold"))
+sequencia_label.grid(row=0, column=2, padx=5, pady=5)
+sequencia_entry = ttk.Entry(user_info_frame)
+sequencia_entry.grid(row=0, column=3, padx=5, pady=5)
+
+conteudo_label = ttk.Label(user_info_frame, text="Conteúdo", font=("Arial", 12, "bold"))
+conteudo_label.grid(row=1, column=2, padx=5, pady=5)
+conteudo_entry = ttk.Entry(user_info_frame)
+conteudo_entry.grid(row=1, column=3, padx=5, pady=5)
+
+# Text Boxes
+text_frame = ttk.LabelFrame(frame, text="Additional Information")
+text_frame.grid(row=2, column=0, padx=20, pady=10, sticky="nsew")
+
+o_que_label = ttk.Label(text_frame, text="O QUE:", font=("Arial", 12, "bold"))
+o_que_label.grid(row=0, column=0, padx=5, pady=5, sticky="w")
+
+o_que_text = tk.Text(text_frame, height=2)
+o_que_text.grid(row=1, column=0, padx=5, pady=5, sticky="nsew")
+
+pra_que_label = ttk.Label(text_frame, text="PRA QUÊ?", font=("Arial", 12, "bold"))
+pra_que_label.grid(row=2, column=0, padx=5, pady=5, sticky="w")
+
+pra_que_text = tk.Text(text_frame, height=2)
+pra_que_text.grid(row=3, column=0, padx=5, pady=5, sticky="nsew")
+
+como_label = ttk.Label(text_frame, text="COMO?", font=("Arial", 12, "bold"))
+como_label.grid(row=4, column=0, padx=5, pady=5, sticky="w")
+
+como_text = tk.Text(text_frame, height=2)
+como_text.grid(row=5, column=0, padx=5, pady=5, sticky="nsew")
+
+# Create the "CRIAR" button
+criar_button = ttk.Button(frame, text="CRIAR", command=criar)
+criar_button.grid(row=3, column=0, padx=20, pady=10, sticky="se")
+
+# Grid Configuration
+frame.grid_rowconfigure(0, weight=1)
+frame.grid_rowconfigure(2, weight=1)
+frame.grid_columnconfigure(0, weight=1)
+text_frame.grid_columnconfigure(0, weight=1)
+
+window.mainloop()
