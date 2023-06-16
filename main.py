@@ -2,30 +2,14 @@ import tkinter as tk
 import tkinter.ttk as ttk
 from ttkthemes import ThemedTk
 
-def criar():
-    # Get the filled text
-    o_que_text_value = o_que_text.get("1.0", "end-1c")
-    pra_que_text_value = pra_que_text.get("1.0", "end-1c")
-    como_text_value = como_text.get("1.0", "end-1c")
-    materia_entry_value = materia_entry.get()
-    turma_entry_value = turma_entry.get()
-    sequencia_entry_value = sequencia_entry.get()
-    conteudo_entry_value = conteudo_entry.get()
-
-    # Store the text in a list or perform any other desired action
-    filled_text = [o_que_text_value, pra_que_text_value, como_text_value,
-                   materia_entry_value, turma_entry_value, sequencia_entry_value,
-                   conteudo_entry_value]
-    print(filled_text)  # Example: Print the filled text
-
-# Create the main window
-window = ThemedTk(theme="breeze")  # Specify the theme name
+# Crie a janela principal
+window = ThemedTk(theme="breeze")  # Especifique o nome do tema
 window.title("Preenchedor de ficha")
 
 frame = ttk.Frame(window)
 frame.pack(padx=20, pady=10)
 
-# Saving User Info
+# Informações do usuário
 user_info_frame = ttk.LabelFrame(frame, text="")
 user_info_frame.grid(row=1, column=0, padx=20, pady=10)
 
@@ -49,8 +33,23 @@ conteudo_label.grid(row=1, column=2, padx=5, pady=5)
 conteudo_entry = ttk.Entry(user_info_frame)
 conteudo_entry.grid(row=1, column=3, padx=5, pady=5)
 
-# Text Boxes
-text_frame = ttk.LabelFrame(frame, text="Additional Information")
+etapa_label = ttk.Label(user_info_frame, text="Etapa", font=("Arial", 12, "bold"))
+etapa_label.grid(row=2, column=0, padx=5, pady=5)
+etapa_combobox = ttk.Combobox(user_info_frame, values=["Definir", "Investigar", "Desenvolver", "Descobrir"])
+etapa_combobox.grid(row=2, column=1, padx=5, pady=5)
+
+numero_atividade_label = ttk.Label(user_info_frame, text="Número de Atividade", font=("Arial", 12, "bold"))
+numero_atividade_label.grid(row=2, column=2, padx=5, pady=5)
+numero_atividade_entry = ttk.Entry(user_info_frame)
+numero_atividade_entry.grid(row=2, column=3, padx=5, pady=5)
+
+quinzenario_label = ttk.Label(user_info_frame, text="Quinzenário", font=("Arial", 12, "bold"))
+quinzenario_label.grid(row=3, column=0, padx=5, pady=5)
+quinzenario_entry = ttk.Entry(user_info_frame)
+quinzenario_entry.grid(row=3, column=1, padx=5, pady=5)
+
+# Caixas de texto
+text_frame = ttk.LabelFrame(frame, text="Informações Adicionais")
 text_frame.grid(row=2, column=0, padx=20, pady=10, sticky="nsew")
 
 o_que_label = ttk.Label(text_frame, text="O QUE:", font=("Arial", 12, "bold"))
@@ -71,11 +70,11 @@ como_label.grid(row=4, column=0, padx=5, pady=5, sticky="w")
 como_text = tk.Text(text_frame, height=2)
 como_text.grid(row=5, column=0, padx=5, pady=5, sticky="nsew")
 
-# Create the "CRIAR" button
+# Crie o botão "CRIAR"
 criar_button = ttk.Button(frame, text="CRIAR", command=criar)
 criar_button.grid(row=3, column=0, padx=20, pady=10, sticky="se")
 
-# Grid Configuration
+# Configuração da grade
 frame.grid_rowconfigure(0, weight=1)
 frame.grid_rowconfigure(2, weight=1)
 frame.grid_columnconfigure(0, weight=1)
