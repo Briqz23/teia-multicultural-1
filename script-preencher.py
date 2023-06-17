@@ -1,5 +1,4 @@
 import io
-from PyPDF2 import PdfMerger
 from urllib.request import urlopen
 from PIL import Image, ImageFont, ImageDraw
 from tkinter import messagebox
@@ -7,9 +6,7 @@ import tkinter as tk
 import tkinter.ttk as ttk
 import PyPDF2
 from ttkthemes import ThemedTk
-from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import letter
-from reportlab.lib.utils import ImageReader
+
 
 def validate_numbers(text):
     return text.isdigit()
@@ -117,25 +114,26 @@ def criar():
     
         draw.text((350, como_y), lista_como[i], font=firstFont, fill='black')
         como_y+=50 
-## combinar pdfs
+
 
     img.save("test-template.pdf")
     
-    #Create a list with the file paths
+    
     pdf_files = ['test-template.pdf', 'templates/other.pdf']
     
     pdf_writer = PyPDF2.PdfWriter()
-    # Merge the PDF files
+    
     for file_path in pdf_files:
         with open(file_path, 'rb') as pdf_file:
             pdf_reader = PyPDF2.PdfReader(pdf_file)
             for page in pdf_reader.pages:
                 pdf_writer.add_page(page)
-    output_path = 'combined.pdf'
+    
+    output_path = f"ficha-atividade-{strings_upper[1]}.pdf"
 
     with open(output_path, 'wb') as output_file:
         pdf_writer.write(output_file)
-        
+
 # Crie a janela principal
 window = ThemedTk(theme="breeze") 
 window.title("Preenchedor de ficha")
