@@ -20,8 +20,9 @@ def criar():
 
     url_bold = 'https://github.com/matomo-org/travis-scripts/blob/master/fonts/Arial_Bold.ttf?raw=True'
     bold_font = io.BytesIO(urlopen(url_bold).read())
-
+    bold_font.seek(0)
     normal_font.seek(0)
+    materiaFont = ImageFont.truetype(bold_font, 40)
     firstFont = ImageFont.truetype(normal_font, 30)
 
     numero_atv = numero_atividade_entry.get()
@@ -55,7 +56,10 @@ def criar():
     #numero_atv
     draw.text((1150, 225), strings_upper[0], font=firstFont, fill='black')
     #matéria
-    #draw.text((820, 120), strings_upper[2], font=ImageFont.truetype(normal_font, 50), fill='white')
+    W = 1700
+    _, _, w, h = draw.textbbox((0, 130), strings_upper[2], font=materiaFont)
+    draw.text(((W-w)/2, 130), strings_upper[2], font=materiaFont, fill='white')
+
     #turma
     draw.text((320, 410), strings_upper[3], font=firstFont, fill='black')
     #quinzenário
