@@ -6,7 +6,8 @@ import tkinter as tk
 import tkinter.ttk as ttk
 import PyPDF2
 from ttkthemes import ThemedTk
-
+from datetime import datetime
+import os
 
 def validate_numbers(text):
     return text.isdigit()
@@ -50,9 +51,6 @@ def criar():
     else:
         img = Image.open("templates/ENTREGAR-1.png")
 
-
-
-
     draw = ImageDraw.Draw(img)
 
     #numero_atv
@@ -65,7 +63,7 @@ def criar():
     #turma
     draw.text((320, 410), strings_upper[3], font=firstFont, fill='black')
     #quinzenário
-    draw.text((970, 418), strings_upper[4], font=firstFont, fill='black')
+    draw.text((980, 418), strings_upper[4], font=firstFont, fill='black')
     #sequencia
     draw.text((1310, 418), strings_upper[5], font=firstFont, fill='black')
     #conteúdo
@@ -92,47 +90,61 @@ def criar():
         return lista
 
 
-    lista_o_que = quebrar_string(strings_upper[7],65)
+    lista_o_que = quebrar_string(strings_upper[7],60)
     o_que_y = 820
     for i in range((len(lista_o_que))):
     
         draw.text((350, o_que_y), lista_o_que[i], font=firstFont, fill='black')
-        o_que_y+=50 
+        o_que_y+=35
 
 
-    lista_pra_que = quebrar_string(strings_upper[8],65)
+    lista_pra_que = quebrar_string(strings_upper[8],60)
     pra_que_y = 980
     for i in range((len(lista_pra_que))):
     
         draw.text((350, pra_que_y), lista_pra_que[i], font=firstFont, fill='black')
-        pra_que_y+=50 
+        pra_que_y+=35
 
 
-    lista_como = quebrar_string(strings_upper[9],65)
+    lista_como = quebrar_string(strings_upper[9],60)
     como_y = 1120
     for i in range((len(lista_como))):
     
         draw.text((350, como_y), lista_como[i], font=firstFont, fill='black')
-        como_y+=50 
+        como_y+=35
 
 
-    img.save("test-template.pdf")
-    
-    
-    pdf_files = ['test-template.pdf', 'templates/other.pdf']
-    
+
+    img.save("test-template.png", dpi=(300, 300))
+
+    pdf_files = ['test-template.png', 'templates/other-1.png']
+
     pdf_writer = PyPDF2.PdfWriter()
-    
+
     for file_path in pdf_files:
-        with open(file_path, 'rb') as pdf_file:
-            pdf_reader = PyPDF2.PdfReader(pdf_file)
-            for page in pdf_reader.pages:
-                pdf_writer.add_page(page)
-    
-    output_path = f"ficha-atividade-{strings_upper[1]}.pdf"
+        if file_path.endswith('.pdf'):
+            with open(file_path, 'rb') as pdf_file:
+                pdf_reader = PyPDF2.PdfReader(pdf_file)
+                for page in pdf_reader.pages:
+                    pdf_writer.add_page(page)
+        elif file_path.endswith('.png'):
+            image = Image.open(file_path)
+            pdf_path = f"{file_path}.pdf"
+            image.save(pdf_path, "PDF", resolution=200)  # Adjust the resolution as needed
+            with open(pdf_path, 'rb') as pdf_file:
+                pdf_reader = PyPDF2.PdfReader(pdf_file)
+                for page in pdf_reader.pages:
+                    pdf_writer.add_page(page)
+            os.remove(pdf_path)
+
+    current_date = datetime.now().strftime("%d_%m_%Y")
+    output_path = f"ABRIR/fichas/ficha-atividade-{strings_upper[1]}-{current_date}.pdf"
 
     with open(output_path, 'wb') as output_file:
         pdf_writer.write(output_file)
+
+    os.startfile(output_path)
+
 
 # Crie a janela principal
 window = ThemedTk(theme="breeze") 
@@ -217,9 +229,6 @@ sair_button.pack(side="left", padx=10)
 
 criar_button = tk.Button(button_frame, text="CRIAR", command=criar, bg="#90EE90", relief="solid", bd=0)
 criar_button.pack(side="left", padx=10)
-
-
-
 
 frame.grid_rowconfigure(0, weight=1)
 frame.grid_rowconfigure(2, weight=1)
