@@ -54,7 +54,7 @@ def criar():
     draw = ImageDraw.Draw(img)
 
     #numero_atv
-    draw.text((1150, 225), strings_upper[0], font=firstFont, fill='black')
+    draw.text((1154, 225), strings_upper[0], font=firstFont, fill='black')
     #matéria
     W = 1700
     _, _, w, h = draw.textbbox((0, 130), strings_upper[2], font=materiaFont)
@@ -69,7 +69,7 @@ def criar():
     #conteúdo
     draw.text((750, 510), strings_upper[6], font=firstFont, fill='black')
 
-    messagebox.showinfo("Sucesso", "Arquivo criado com sucesso!")
+    messagebox.showinfo("Sucesso", "Arquivo criado com sucesso! Eles serão armazenados na pasta ABRIR > fichas")
 
     #limitar a 150 caracteres no front
     def quebrar_string(string, length):
@@ -138,13 +138,16 @@ def criar():
             os.remove(pdf_path)
 
     current_date = datetime.now().strftime("%d_%m_%Y")
-    output_path = f"ABRIR/fichas/ficha-atividade-{strings_upper[1]}-{current_date}.pdf"
+    output_folder = "ABRIR/fichas"
+    file_name = f"FICHA-{strings_upper[1]}-{datetime.now().strftime('%Y-%m-%d')}.pdf"
+    output_path = os.path.join(output_folder, file_name)
 
+    # Save the PDF file
     with open(output_path, 'wb') as output_file:
         pdf_writer.write(output_file)
 
     os.startfile(output_path)
-
+        # Add code to open the file on other operating systems
 
 # Crie a janela principal
 window = ThemedTk(theme="breeze") 
