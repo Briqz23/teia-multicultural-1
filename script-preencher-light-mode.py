@@ -1,3 +1,4 @@
+#SEM TTKBOOSTRAP
 import io
 import textwrap
 from urllib.request import urlopen
@@ -9,6 +10,7 @@ import PyPDF2
 from ttkthemes import ThemedTk
 from datetime import datetime
 import os
+
 
 def validate_numbers(text):
     return text.isdigit()
@@ -74,16 +76,16 @@ def criar():
     #conteúdo
     draw.text((750, 510), strings[6], font=firstFont, fill='black')
     #instrucoes
-    #draw.text((332, 1063), strings[10], font=firstFont, fill='black')
+    
     y=1363
     for line in lines:
-        wrapped_lines = textwrap.wrap(line, width=100) # Adjust the width as per your requirements
+        wrapped_lines = textwrap.wrap(line, width=100) 
 
         for wrapped_line in wrapped_lines:
             draw.text((332, y), wrapped_line, font=firstFont, fill='black')
             y += firstFont.getbbox(wrapped_line)[1] + 35
 
-    y += 35  # Add additional spacing between paragraphs if needed
+    y += 35  
     messagebox.showinfo("Sucesso", "Arquivo criado com sucesso! Eles serão armazenados na pasta ABRIR > fichas")
     
 
@@ -147,7 +149,7 @@ def criar():
         elif file_path.endswith('.png'):
             image = Image.open(file_path)
             pdf_path = f"{file_path}.pdf"
-            image.save(pdf_path, "PDF", resolution=200)  # Adjust the resolution as needed
+            image.save(pdf_path, "PDF", resolution=200)  
             with open(pdf_path, 'rb') as pdf_file:
                 pdf_reader = PyPDF2.PdfReader(pdf_file)
                 for page in pdf_reader.pages:
@@ -159,12 +161,12 @@ def criar():
     file_name = f"FICHA-{strings[1]}-{datetime.now().strftime('%Y-%m-%d')}.pdf"
     output_path = os.path.join(output_folder, file_name)
 
-    # Save the PDF file
+
     with open(output_path, 'wb') as output_file:
         pdf_writer.write(output_file)
 
     os.startfile(output_path)
-        # Add code to open the file on other operating systems
+
 
 # Crie a janela principal
 window = ThemedTk(theme="breeze") 
@@ -183,37 +185,37 @@ frame.pack(padx=20, pady=10)
 user_info_frame = ttk.LabelFrame(frame, text="")
 user_info_frame.grid(row=1, column=0, padx=20, pady=10)
 
-etapa_label = ttk.Label(user_info_frame, text="Etapa", font=("Arial", 12, "bold"))
+etapa_label = ttk.Label(user_info_frame, text="Etapa:", font=("Arial", 12, "bold"))
 etapa_label.grid(row=0, column=0, padx=5, pady=5)
 etapa_combobox = ttk.Combobox(user_info_frame, values=["Definir", "Descobrir", "Desenvolver", "Entregar"], state="readonly")
 etapa_combobox.grid(row=0, column=1, padx=5, pady=5)
 
-numero_atividade_label = ttk.Label(user_info_frame, text="Número de Atividade", font=("Arial", 12, "bold"))
+numero_atividade_label = ttk.Label(user_info_frame, text="Número de Atividade:", font=("Arial", 12, "bold"))
 numero_atividade_label.grid(row=0, column=2, padx=5, pady=5)
 numero_atividade_entry = ttk.Entry(user_info_frame, font=("Arial", 10))
 numero_atividade_entry.grid(row=0, column=3, padx=5, pady=5)
 
-materia_label = ttk.Label(user_info_frame, text="Matéria", font=("Arial", 12, "bold"))
+materia_label = ttk.Label(user_info_frame, text="Matéria:", font=("Arial", 12, "bold"))
 materia_label.grid(row=1, column=0, padx=5, pady=5)
 materia_entry = ttk.Entry(user_info_frame, font=("Arial", 10))
 materia_entry.grid(row=1, column=1, padx=5, pady=5)
 
-turma_label = ttk.Label(user_info_frame, text="Turma/Ano", font=("Arial", 12, "bold"))
+turma_label = ttk.Label(user_info_frame, text="Turma/Ano:", font=("Arial", 12, "bold"))
 turma_label.grid(row=1, column=2, padx=5, pady=5)
 turma_entry = ttk.Entry(user_info_frame, font=("Arial", 10))
 turma_entry.grid(row=1, column=3, padx=5, pady=5)
 
-sequencia_label = ttk.Label(user_info_frame, text="Sequência", font=("Arial", 12, "bold"))
+sequencia_label = ttk.Label(user_info_frame, text="Sequência:", font=("Arial", 12, "bold"))
 sequencia_label.grid(row=2, column=0, padx=5, pady=5)
 sequencia_entry = ttk.Entry(user_info_frame, font=("Arial", 10))
 sequencia_entry.grid(row=2, column=1, padx=5, pady=5)
 
-conteudo_label = ttk.Label(user_info_frame, text="Conteúdo", font=("Arial", 12, "bold"))
+conteudo_label = ttk.Label(user_info_frame, text="Conteúdo:", font=("Arial", 12, "bold"))
 conteudo_label.grid(row=2, column=2, padx=5, pady=5)
 conteudo_entry = ttk.Entry(user_info_frame, font=("Arial", 10))
 conteudo_entry.grid(row=2, column=3, padx=5, pady=5)
 
-quinzenario_label = ttk.Label(user_info_frame, text="Quinzenário", font=("Arial", 12, "bold"))
+quinzenario_label = ttk.Label(user_info_frame, text="Quinzenário:", font=("Arial", 12, "bold"))
 quinzenario_label.grid(row=3, column=0, padx=5, pady=5)
 quinzenario_entry = ttk.Entry(user_info_frame, font=("Arial", 10))
 quinzenario_entry.grid(row=3, column=1, padx=5, pady=5)
@@ -222,7 +224,7 @@ quinzenario_entry.grid(row=3, column=1, padx=5, pady=5)
 text_frame = ttk.LabelFrame(frame, text="Informações Adicionais")
 text_frame.grid(row=2, column=0, padx=20, pady=10, sticky="nsew")
 
-o_que_label = ttk.Label(text_frame, text="O QUE:", font=("Arial", 12, "bold"))
+o_que_label = ttk.Label(text_frame, text="O QUE?", font=("Arial", 12, "bold"))
 o_que_label.grid(row=0, column=0, padx=5, pady=5, sticky="w")
 
 o_que_text = tk.Text(text_frame, height=2, bg="white", font=("Arial", 10), wrap='word')
@@ -240,7 +242,7 @@ como_label.grid(row=4, column=0, padx=5, pady=5, sticky="w")
 como_text = tk.Text(text_frame, height=2, bg="white", wrap = 'word', font=("Arial", 10))
 como_text.grid(row=5, column=0, padx=5, pady=5, sticky="nsew")
 
-instrucoes_label = ttk.Label(text_frame, text="INTRUÇÕES", font=("Arial", 12, "bold"))
+instrucoes_label = ttk.Label(text_frame, text="INTRUÇÕES:", font=("Arial", 12, "bold"))
 instrucoes_label.grid(row=6, column=0, padx=5, pady=5, sticky="w")
 
 instrucoes_text = tk.Text(text_frame, height=8, bg="white", wrap = 'word', font=("Arial", 10))
@@ -261,4 +263,3 @@ frame.grid_columnconfigure(0, weight=1)
 text_frame.grid_columnconfigure(0, weight=1)
 
 window.mainloop()
-
