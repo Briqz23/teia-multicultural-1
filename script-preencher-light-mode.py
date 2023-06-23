@@ -108,29 +108,30 @@ def criar():
         
         return lista
 
+    def wrap_text(text, width):
+        return textwrap.wrap(text, width=width)
 
-    lista_o_que = quebrar_string(strings[7],60)
+    wrapped_o_que = wrap_text(strings[7], 80)
+
     o_que_y = 820
-    for i in range((len(lista_o_que))):
-    
-        draw.text((350, o_que_y), lista_o_que[i], font=firstFont, fill='black')
-        o_que_y+=35
+    for line in wrapped_o_que:
+        draw.text((350, o_que_y), line, font=firstFont, fill='black')
+        o_que_y += 35
 
+    wrapped_pra_que = wrap_text(strings[8], 80)
 
-    lista_pra_que = quebrar_string(strings[8],60)
     pra_que_y = 980
-    for i in range((len(lista_pra_que))):
-    
-        draw.text((350, pra_que_y), lista_pra_que[i], font=firstFont, fill='black')
-        pra_que_y+=35
+    for line in wrapped_pra_que:
+        draw.text((350, pra_que_y), line, font=firstFont, fill='black')
+        pra_que_y += 35
 
+    wrapped_como = wrap_text(strings[9], 80)
 
-    lista_como = quebrar_string(strings[9],60)
     como_y = 1120
-    for i in range((len(lista_como))):
-        
-        draw.text((350, como_y), lista_como[i], font=firstFont, fill='black')
-        como_y+=35
+    for line in wrapped_como:
+        draw.text((350, como_y), line, font=firstFont, fill='black')
+        como_y += 35
+
 
 
 
