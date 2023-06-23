@@ -222,32 +222,32 @@ quinzenario_entry = ttk.Entry(user_info_frame, font=("Arial", 10))
 quinzenario_entry.grid(row=3, column=1, padx=5, pady=5)
 
 def validate_input_como(event):
-    text = como_text.get("1.0", "end-1c")  # Get the text from the widget
+    text = como_text.get("1.0", "end-1c")  
     if len(text) > character_limit:
-        # Truncate the text to the character limit
+        
         truncated_text = text[:character_limit]
-        como_text.delete("1.0", "end-1c")  # Clear the widget
-        como_text.insert("1.0", truncated_text)  # Insert the truncated text
+        como_text.delete("1.0", "end-1c")  
+        como_text.insert("1.0", truncated_text)  
     return True
 
 
 def validate_input_pra_que(event):
-    text = pra_que_text.get("1.0", "end-1c")  # Get the text from the widget
+    text = pra_que_text.get("1.0", "end-1c")  
     if len(text) > character_limit:
-        # Truncate the text to the character limit
+        
         truncated_text = text[:character_limit]
-        pra_que_text.delete("1.0", "end-1c")  # Clear the widget
-        pra_que_text.insert("1.0", truncated_text)  # Insert the truncated text
+        pra_que_text.delete("1.0", "end-1c")  
+        pra_que_text.insert("1.0", truncated_text)  
     return True
 
 
 def validate_input_o_que(event):
-    text = o_que_text.get("1.0", "end-1c")  # Get the text from the widget
+    text = o_que_text.get("1.0", "end-1c")  
     if len(text) > character_limit:
-        # Truncate the text to the character limit
+        
         truncated_text = text[:character_limit]
-        o_que_text.delete("1.0", "end-1c")  # Clear the widget
-        o_que_text.insert("1.0", truncated_text)  # Insert the truncated text
+        o_que_text.delete("1.0", "end-1c")  
+        o_que_text.insert("1.0", truncated_text)  
     return True
 
 def set_character_limit(limit):
