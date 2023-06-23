@@ -111,21 +111,21 @@ def criar():
     def wrap_text(text, width):
         return textwrap.wrap(text, width=width)
 
-    wrapped_o_que = wrap_text(strings[7], 80)
+    wrapped_o_que = wrap_text(strings[7], 74)
 
     o_que_y = 820
     for line in wrapped_o_que:
         draw.text((350, o_que_y), line, font=firstFont, fill='black')
         o_que_y += 35
 
-    wrapped_pra_que = wrap_text(strings[8], 80)
+    wrapped_pra_que = wrap_text(strings[8], 74)
 
     pra_que_y = 980
     for line in wrapped_pra_que:
         draw.text((350, pra_que_y), line, font=firstFont, fill='black')
         pra_que_y += 35
 
-    wrapped_como = wrap_text(strings[9], 80)
+    wrapped_como = wrap_text(strings[9], 74)
 
     como_y = 1120
     for line in wrapped_como:
@@ -188,7 +188,7 @@ user_info_frame.grid(row=1, column=0, padx=20, pady=10)
 
 etapa_label = ttk.Label(user_info_frame, text="Etapa:", font=("Arial", 12, "bold"))
 etapa_label.grid(row=0, column=0, padx=5, pady=5)
-etapa_combobox = ttk.Combobox(user_info_frame, values=["Definir", "Descobrir", "Desenvolver", "Entregar"], state="readonly")
+etapa_combobox = ttk.Combobox(user_info_frame, values=["Descobrir", "Definir", "Desenvolver", "Entregar"], state="readonly")
 etapa_combobox.grid(row=0, column=1, padx=5, pady=5)
 
 numero_atividade_label = ttk.Label(user_info_frame, text="Número de Atividade:", font=("Arial", 12, "bold"))
@@ -221,6 +221,40 @@ quinzenario_label.grid(row=3, column=0, padx=5, pady=5)
 quinzenario_entry = ttk.Entry(user_info_frame, font=("Arial", 10))
 quinzenario_entry.grid(row=3, column=1, padx=5, pady=5)
 
+def validate_input_como(event):
+    text = como_text.get("1.0", "end-1c")  # Get the text from the widget
+    if len(text) > character_limit:
+        # Truncate the text to the character limit
+        truncated_text = text[:character_limit]
+        como_text.delete("1.0", "end-1c")  # Clear the widget
+        como_text.insert("1.0", truncated_text)  # Insert the truncated text
+    return True
+
+
+def validate_input_pra_que(event):
+    text = pra_que_text.get("1.0", "end-1c")  # Get the text from the widget
+    if len(text) > character_limit:
+        # Truncate the text to the character limit
+        truncated_text = text[:character_limit]
+        pra_que_text.delete("1.0", "end-1c")  # Clear the widget
+        pra_que_text.insert("1.0", truncated_text)  # Insert the truncated text
+    return True
+
+
+def validate_input_o_que(event):
+    text = o_que_text.get("1.0", "end-1c")  # Get the text from the widget
+    if len(text) > character_limit:
+        # Truncate the text to the character limit
+        truncated_text = text[:character_limit]
+        o_que_text.delete("1.0", "end-1c")  # Clear the widget
+        o_que_text.insert("1.0", truncated_text)  # Insert the truncated text
+    return True
+
+def set_character_limit(limit):
+    global character_limit
+    character_limit = limit
+
+character_limit = 215
 # Caixas de texto
 text_frame = ttk.LabelFrame(frame, text="Informações Adicionais")
 text_frame.grid(row=2, column=0, padx=20, pady=10, sticky="nsew")
@@ -228,19 +262,19 @@ text_frame.grid(row=2, column=0, padx=20, pady=10, sticky="nsew")
 o_que_label = ttk.Label(text_frame, text="O QUE?", font=("Arial", 12, "bold"))
 o_que_label.grid(row=0, column=0, padx=5, pady=5, sticky="w")
 
-o_que_text = tk.Text(text_frame, height=2, bg="white", font=("Arial", 10), wrap='word')
+o_que_text = tk.Text(text_frame, height=3, bg="white", font=("Arial", 10), wrap='word')
 o_que_text.grid(row=1, column=0, padx=5, pady=5, sticky="nsew")
 
 pra_que_label = ttk.Label(text_frame, text="PRA QUÊ?", font=("Arial", 12, "bold"))
 pra_que_label.grid(row=2, column=0, padx=5, pady=5, sticky="w")
 
-pra_que_text = tk.Text(text_frame, height=2, bg="white", wrap = 'word', font=("Arial", 10))
+pra_que_text = tk.Text(text_frame, height=3, bg="white", wrap = 'word', font=("Arial", 10))
 pra_que_text.grid(row=3, column=0, padx=5, pady=5, sticky="nsew")
 
 como_label = ttk.Label(text_frame, text="COMO?", font=("Arial", 12, "bold"))
 como_label.grid(row=4, column=0, padx=5, pady=5, sticky="w")
 
-como_text = tk.Text(text_frame, height=2, bg="white", wrap = 'word', font=("Arial", 10))
+como_text = tk.Text(text_frame, height=3, bg="white", wrap = 'word', font=("Arial", 10))
 como_text.grid(row=5, column=0, padx=5, pady=5, sticky="nsew")
 
 instrucoes_label = ttk.Label(text_frame, text="INTRUÇÕES:", font=("Arial", 12, "bold"))
@@ -257,6 +291,16 @@ sair_button.pack(side="left", padx=10)
 
 criar_button = tk.Button(button_frame, text="CRIAR", command=criar, bg="#90EE90", relief="solid", bd=0)
 criar_button.pack(side="left", padx=10)
+
+como_text.bind("<KeyPress>", validate_input_como)
+como_text.bind("<KeyRelease>", validate_input_como)
+
+pra_que_text.bind("<KeyPress>", validate_input_pra_que)
+pra_que_text.bind("<KeyRelease>", validate_input_pra_que)
+
+o_que_text.bind("<KeyPress>", validate_input_o_que)
+o_que_text.bind("<KeyRelease>", validate_input_o_que)
+
 
 frame.grid_rowconfigure(0, weight=1)
 frame.grid_rowconfigure(2, weight=1)
