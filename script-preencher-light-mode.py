@@ -180,11 +180,11 @@ style.configure("RoundedEntry.TEntry", borderwidth=0, relief="solid",
 
 
 frame = ttk.Frame(window)
-frame.pack(padx=20, pady=10)
+frame.pack(padx=20  )
 
 # Informações do usuário
 user_info_frame = ttk.LabelFrame(frame, text="")
-user_info_frame.grid(row=1, column=0, padx=20, pady=10)
+user_info_frame.grid(row=1, column=0, padx=20, pady=(10,20))
 
 etapa_label = ttk.Label(user_info_frame, text="Etapa:", font=("Arial", 12, "bold"))
 etapa_label.grid(row=0, column=0, padx=5, pady=5)
@@ -255,9 +255,9 @@ def set_character_limit(limit):
     character_limit = limit
 
 character_limit = 215
-# Caixas de texto
+ 
 text_frame = ttk.LabelFrame(frame, text="Informações Adicionais")
-text_frame.grid(row=2, column=0, padx=20, pady=10, sticky="nsew")
+text_frame.grid(row=2, column=0, padx=20, pady=(10,5), sticky="nsew")
 
 o_que_label = ttk.Label(text_frame, text="O QUE?", font=("Arial", 12, "bold"))
 o_que_label.grid(row=0, column=0, padx=5, pady=5, sticky="w")
@@ -280,7 +280,7 @@ como_text.grid(row=5, column=0, padx=5, pady=5, sticky="nsew")
 instrucoes_label = ttk.Label(text_frame, text="INTRUÇÕES:", font=("Arial", 12, "bold"))
 instrucoes_label.grid(row=6, column=0, padx=5, pady=5, sticky="w")
 
-instrucoes_text = tk.Text(text_frame, height=8, bg="white", wrap = 'word', font=("Arial", 10))
+instrucoes_text = tk.Text(text_frame, height=5, bg="white", wrap = 'word', font=("Arial", 10))
 instrucoes_text.grid(row=7, column=0, padx=5, pady=5, sticky="nsew")
 
 button_frame = tk.Frame(window)
