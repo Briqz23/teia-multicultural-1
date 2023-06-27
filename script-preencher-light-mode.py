@@ -18,8 +18,43 @@ def validate_numbers(text):
 def sair():
     window.destroy()
 
+def criar_tudo():
+    strings = criar_primeira_pagina()
+    criar_segunda_pagina()
 
-def criar():
+    pdf_files = ['primeira-pagina.png', 'segunda-pagina.png']
+
+    pdf_writer = PyPDF2.PdfWriter()
+
+    for file_path in pdf_files:
+        if file_path.endswith('.pdf'):
+            with open(file_path, 'rb') as pdf_file:
+                pdf_reader = PyPDF2.PdfReader(pdf_file)
+                for page in pdf_reader.pages:
+                    pdf_writer.add_page(page)
+        elif file_path.endswith('.png'):
+            image = Image.open(file_path)
+            pdf_path = f"{file_path}.pdf"
+            image.save(pdf_path, "PDF", resolution=200)  
+            with open(pdf_path, 'rb') as pdf_file:
+                pdf_reader = PyPDF2.PdfReader(pdf_file)
+                for page in pdf_reader.pages:
+                    pdf_writer.add_page(page)
+            os.remove(pdf_path)
+
+    current_date = datetime.now().strftime("%d_%m_%Y")
+    output_folder = "ABRIR/fichas"
+    
+    file_name = f"FICHA-{strings[1]}-{datetime.now().strftime('%d-%m_%Hh%M')}.pdf"
+    output_path = os.path.join(output_folder, file_name)
+
+
+    with open(output_path, 'wb') as output_file:
+        pdf_writer.write(output_file)
+
+    os.startfile(output_path)
+
+def criar_primeira_pagina():
 
     url_font = 'https://github.com/matomo-org/travis-scripts/blob/master/fonts/Arial.ttf?raw=True'
     normal_font = io.BytesIO(urlopen(url_font).read())
@@ -44,7 +79,7 @@ def criar():
     como = como_text.get("1.0", "end-1c")
     instrucoes = instrucoes_text.get("1.0", "end")
     wrapped_instrucoes = textwrap.wrap(instrucoes, width=50)
-    lines = instrucoes.split('\n')
+    lines = instrucoes.splitlines()
 
     strings = [numero_atv, etapa, materia, turma, quinzenario, sequencia, conteudo, o_que, pra_que, como, instrucoes]
     
@@ -79,34 +114,16 @@ def criar():
     
     y=1363
     for line in lines:
-        wrapped_lines = textwrap.wrap(line, width=100) 
+        if line.strip():
 
-        for wrapped_line in wrapped_lines:
-            draw.text((332, y), wrapped_line, font=firstFont, fill='black')
-            y += firstFont.getbbox(wrapped_line)[1] + 35
+            wrapped_lines = textwrap.wrap(line, width=85) 
 
-    y += 35  
+            for wrapped_line in wrapped_lines:
+                draw.text((332, y), wrapped_line, font=firstFont, fill='black')
+                y += firstFont.getbbox(wrapped_line)[1] + 35
+            y+=35
+        y += 35  
     messagebox.showinfo("Sucesso", "Arquivo criado com sucesso! Eles serão armazenados na pasta ABRIR > fichas")
-    
-
-
-    #limitar a 150 caracteres no front
-    def quebrar_string(string, length):
-        palavras = string.split()
-        lista = []
-        chunk = ""
-        
-        for palavra in palavras:
-            if len(chunk) + len(palavra) <= length:
-                chunk += " " + palavra if chunk else palavra
-            else:
-                lista.append(chunk)
-                chunk = palavra
-        
-        if chunk:
-            lista.append(chunk)
-        
-        return lista
 
     def wrap_text(text, width):
         return textwrap.wrap(text, width=width)
@@ -135,38 +152,39 @@ def criar():
 
 
 
-    img.save("test-template.png", dpi=(300, 300))
+    img.save("primeira-pagina.png", dpi=(300, 300))
 
-    pdf_files = ['test-template.png', 'templates/other-1.png']
-
-    pdf_writer = PyPDF2.PdfWriter()
-
-    for file_path in pdf_files:
-        if file_path.endswith('.pdf'):
-            with open(file_path, 'rb') as pdf_file:
-                pdf_reader = PyPDF2.PdfReader(pdf_file)
-                for page in pdf_reader.pages:
-                    pdf_writer.add_page(page)
-        elif file_path.endswith('.png'):
-            image = Image.open(file_path)
-            pdf_path = f"{file_path}.pdf"
-            image.save(pdf_path, "PDF", resolution=200)  
-            with open(pdf_path, 'rb') as pdf_file:
-                pdf_reader = PyPDF2.PdfReader(pdf_file)
-                for page in pdf_reader.pages:
-                    pdf_writer.add_page(page)
-            os.remove(pdf_path)
-
-    current_date = datetime.now().strftime("%d_%m_%Y")
-    output_folder = "ABRIR/fichas"
-    file_name = f"FICHA-{strings[1]}-{datetime.now().strftime('%Y-%m-%d')}.pdf"
-    output_path = os.path.join(output_folder, file_name)
+    return strings
 
 
-    with open(output_path, 'wb') as output_file:
-        pdf_writer.write(output_file)
 
-    os.startfile(output_path)
+def criar_segunda_pagina():
+    url_font = 'https://github.com/matomo-org/travis-scripts/blob/master/fonts/Arial.ttf?raw=True'
+    normal_font = io.BytesIO(urlopen(url_font).read())
+    normal_font.seek(0)
+    firstFont = ImageFont.truetype(normal_font, 30)
+
+    instrucoes2 = instrucoes_text2.get("1.0", "end")
+    wrapped_instrucoes = textwrap.wrap(instrucoes2, width=50)
+    lines = instrucoes2.splitlines()
+
+    img = Image.open("templates/other-1.png")
+    draw = ImageDraw.Draw(img)
+    y=100
+    wrapped_instrucoes = textwrap.wrap(instrucoes2, width=50)
+
+    for line in lines:
+        if line.strip():  
+            wrapped_lines = textwrap.wrap(line, width=85)
+
+            for wrapped_line in wrapped_lines:
+                draw.text((332, y), wrapped_line, font=firstFont, fill='black')
+                y += firstFont.getbbox(wrapped_line)[1] + 35
+        y+=35
+    y+=35
+    
+    img.save("segunda-pagina.png", dpi=(300, 300))
+
 
 
 # Crie a janela principal
@@ -250,6 +268,14 @@ def validate_input_o_que(event):
         o_que_text.insert("1.0", truncated_text)  
     return True
 
+MAX_LINES_INSTRUCOES = 6  
+
+def validate_input_instrucoes(event):
+    lines = instrucoes_text.get("1.0", "end-1c").split('\n')
+    if len(lines) > MAX_LINES_INSTRUCOES:
+        instrucoes_text.delete("end-2l linestart", "end-1c")
+    return True
+
 def set_character_limit(limit):
     global character_limit
     character_limit = limit
@@ -277,11 +303,18 @@ como_label.grid(row=4, column=0, padx=5, pady=5, sticky="w")
 como_text = tk.Text(text_frame, height=3, bg="white", wrap = 'word', font=("Arial", 10))
 como_text.grid(row=5, column=0, padx=5, pady=5, sticky="nsew")
 
-instrucoes_label = ttk.Label(text_frame, text="INTRUÇÕES:", font=("Arial", 12, "bold"))
-instrucoes_label.grid(row=6, column=0, padx=5, pady=5, sticky="w")
+instrucoes_label = ttk.Label(text_frame, text="INTRUÇÕES (primeira página):", font=("Arial", 12, "bold"))
+instrucoes_label.grid(row=0, column=4, padx=5, pady=5, sticky="w")
 
 instrucoes_text = tk.Text(text_frame, height=5, bg="white", wrap = 'word', font=("Arial", 10))
-instrucoes_text.grid(row=7, column=0, padx=5, pady=5, sticky="nsew")
+instrucoes_text.grid(row=1, column=4, padx=5, pady=5, sticky="nsew")
+
+instrucoes_label2 = ttk.Label(text_frame, text="INTRUÇÕES (segunda página):", font=("Arial", 12, "bold"))
+instrucoes_label2.grid(row=2, column=4, padx=5, pady=5, sticky="w")
+
+instrucoes_text2 = tk.Text(text_frame, height=5, bg="white", wrap = 'word', font=("Arial", 10))
+instrucoes_text2.grid(row=3, column=4, padx=5, pady=5, sticky="nsew")
+
 
 button_frame = tk.Frame(window)
 button_frame.pack(pady=10)
@@ -289,8 +322,13 @@ button_frame.pack(pady=10)
 sair_button = tk.Button(button_frame, text="SAIR", command=sair, bg="#ff474c", relief="solid", bd=0)
 sair_button.pack(side="left", padx=10)
 
-criar_button = tk.Button(button_frame, text="CRIAR", command=criar, bg="#90EE90", relief="solid", bd=0)
+criar_button = tk.Button(button_frame, text="CRIAR", command=criar_tudo, bg="#90EE90", relief="solid", bd=0)
 criar_button.pack(side="left", padx=10)
+
+
+instrucoes_text.bind("<KeyPress>", validate_input_instrucoes)
+instrucoes_text.bind("<KeyRelease>", validate_input_instrucoes)
+
 
 como_text.bind("<KeyPress>", validate_input_como)
 como_text.bind("<KeyRelease>", validate_input_como)
