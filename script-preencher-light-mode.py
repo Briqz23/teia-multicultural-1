@@ -268,14 +268,28 @@ def validate_input_o_que(event):
         o_que_text.insert("1.0", truncated_text)  
     return True
 
-MAX_LINES_INSTRUCOES = 6  
+MAX_LINES_INSTRUCOES = 7
 
 def validate_input_instrucoes(event):
     lines = instrucoes_text.get("1.0", "end-1c").split('\n')
-    if len(lines) > MAX_LINES_INSTRUCOES:
-        instrucoes_text.delete("end-2l linestart", "end-1c")
-    return True
+    characters = len(instrucoes_text.get("1.0", "end-1c"))
 
+    if len(lines) > MAX_LINES_INSTRUCOES or characters > character_limit:
+        # Delete the last line if it exceeds the maximum lines
+        if len(lines) > MAX_LINES_INSTRUCOES:
+            instrucoes_text.delete("end-2l linestart", "end-1c")
+
+        # Delete the last character if it exceeds the maximum characters
+        if characters > character_limit:
+            instrucoes_text.delete("end-2c")
+
+        # Disable further input and display a warning message
+        instrucoes_text.config(state="disabled")
+        messagebox.showinfo("Limit Exceeded", "You have reached the limit of lines or characters.")
+
+        return "break"  # Prevents further input
+
+    instrucoes_text.config(state="normal") 
 def set_character_limit(limit):
     global character_limit
     character_limit = limit
@@ -300,7 +314,7 @@ pra_que_text.grid(row=3, column=0, padx=5, pady=5, sticky="nsew")
 como_label = ttk.Label(text_frame, text="COMO?", font=("Arial", 12, "bold"))
 como_label.grid(row=4, column=0, padx=5, pady=5, sticky="w")
 
-como_text = tk.Text(text_frame, height=3, bg="white", wrap = 'word', font=("Arial", 10))
+como_text = tk.Text(text_frame, height=4, bg="white", wrap = 'word', font=("Arial", 10))
 como_text.grid(row=5, column=0, padx=5, pady=5, sticky="nsew")
 
 instrucoes_label = ttk.Label(text_frame, text="INTRUÇÕES (primeira página):", font=("Arial", 12, "bold"))
@@ -308,6 +322,7 @@ instrucoes_label.grid(row=0, column=4, padx=5, pady=5, sticky="w")
 
 instrucoes_text = tk.Text(text_frame, height=5, bg="white", wrap = 'word', font=("Arial", 10))
 instrucoes_text.grid(row=1, column=4, padx=5, pady=5, sticky="nsew")
+instrucoes_text.bind("<Key>", validate_input_instrucoes)
 
 instrucoes_label2 = ttk.Label(text_frame, text="INTRUÇÕES (segunda página):", font=("Arial", 12, "bold"))
 instrucoes_label2.grid(row=2, column=4, padx=5, pady=5, sticky="w")
