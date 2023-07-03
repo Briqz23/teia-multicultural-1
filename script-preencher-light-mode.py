@@ -241,9 +241,9 @@ quinzenario_entry.grid(row=3, column=1, padx=5, pady=5)
 
 def validate_input_como(event):
     text = como_text.get("1.0", "end-1c")  
-    if len(text) > character_limit:
+    if len(text) > CHARACTER_LIMIT:
         
-        truncated_text = text[:character_limit]
+        truncated_text = text[:CHARACTER_LIMIT]
         como_text.delete("1.0", "end-1c")  
         como_text.insert("1.0", truncated_text)  
     return True
@@ -251,9 +251,9 @@ def validate_input_como(event):
 
 def validate_input_pra_que(event):
     text = pra_que_text.get("1.0", "end-1c")  
-    if len(text) > character_limit:
+    if len(text) > CHARACTER_LIMIT:
         
-        truncated_text = text[:character_limit]
+        truncated_text = text[:CHARACTER_LIMIT]
         pra_que_text.delete("1.0", "end-1c")  
         pra_que_text.insert("1.0", truncated_text)  
     return True
@@ -261,40 +261,108 @@ def validate_input_pra_que(event):
 
 def validate_input_o_que(event):
     text = o_que_text.get("1.0", "end-1c")  
-    if len(text) > character_limit:
+    if len(text) > CHARACTER_LIMIT:
         
-        truncated_text = text[:character_limit]
+        truncated_text = text[:CHARACTER_LIMIT]
         o_que_text.delete("1.0", "end-1c")  
         o_que_text.insert("1.0", truncated_text)  
     return True
 
-MAX_LINES_INSTRUCOES = 7
 
+#---------------------------------------------------------------------------------
+
+MAX_LINES_INSTRUCOES = 7
+CHARACTER_LIMIT= 600
+# dsdsdsd 
 def validate_input_instrucoes(event):
     lines = instrucoes_text.get("1.0", "end-1c").split('\n')
     characters = len(instrucoes_text.get("1.0", "end-1c"))
+    current_line = int(instrucoes_text.index("insert").split('.')[0])
 
-    if len(lines) > MAX_LINES_INSTRUCOES or characters > character_limit:
-        # Delete the last line if it exceeds the maximum lines
+    if len(lines) > MAX_LINES_INSTRUCOES or characters > CHARACTER_LIMIT:
+        
         if len(lines) > MAX_LINES_INSTRUCOES:
-            instrucoes_text.delete("end-2l linestart", "end-1c")
+            instrucoes_text.delete(f"{current_line}.0", "end")
 
-        # Delete the last character if it exceeds the maximum characters
-        if characters > character_limit:
+        
+        if characters > CHARACTER_LIMIT:
             instrucoes_text.delete("end-2c")
 
-        # Disable further input and display a warning message
+        
         instrucoes_text.config(state="disabled")
-        messagebox.showinfo("Limit Exceeded", "You have reached the limit of lines or characters.")
+        messagebox.showinfo("Limite!", "Você chegou ao limite da primeira página. Para dar continuação, use a caixa de texto abaixo.")
 
-        return "break"  # Prevents further input
+    else:
+        instrucoes_text.config(state="normal")  
 
-    instrucoes_text.config(state="normal") 
+    return True
+
+def validate_paste_instrucoes(event):
+    pasted_text = event.widget.selection_get(selection="CLIPBOARD")
+    lines = instrucoes_text.get("1.0", "end-1c").split('\n')
+    characters = len(instrucoes_text.get("1.0", "end-1c"))
+    total_lines = len(lines) + pasted_text.count('\n')
+    total_characters = characters + len(pasted_text)
+
+    if total_lines > MAX_LINES_INSTRUCOES or total_characters > CHARACTER_LIMIT:
+        # Display a warning message
+        messagebox.showinfo("Limit Exceeded", "Pasted text exceeds the line or character limit.")
+        return "break"  # Prevent the paste operation
+
+    # Perform the regular input validation
+    validate_input_instrucoes(event)
+#-----------------------#-----------------------#-----------------------#-----------------------#-----------------------
+MAX_LINES_INSTRUCOES_SECOND_PAGE = 24
+CHARACTER_LIMIT_SECOND_PAGE = 1400
+# dsdsdsd 
+def validate_input_instrucoes_second_page(event):
+    lines = instrucoes_text2.get("1.0", "end-1c").split('\n')
+    characters = len(instrucoes_text2.get("1.0", "end-1c"))
+    current_line = int(instrucoes_text2.index("insert").split('.')[0])
+
+    if len(lines) > MAX_LINES_INSTRUCOES_SECOND_PAGE or characters > CHARACTER_LIMIT_SECOND_PAGE:
+        
+        if len(lines) > MAX_LINES_INSTRUCOES_SECOND_PAGE:
+            instrucoes_text2.delete(f"{current_line}.0", "end")
+
+        
+        if characters > CHARACTER_LIMIT_SECOND_PAGE:
+            instrucoes_text2.delete("end-2c")
+
+        
+        instrucoes_text2.config(state="disabled")
+        messagebox.showinfo("Limite!", "Você chegou ao limite da primeira página. Para dar continuação, use a caixa de texto abaixo.")
+
+    else:
+        instrucoes_text2.config(state="normal")  
+
+    return True
+
+def validate_paste_instrucoes_second_page(event):
+    pasted_text = event.widget.selection_get(selection="CLIPBOARD")
+    lines = instrucoes_text2.get("1.0", "end-1c").split('\n')
+    characters = len(instrucoes_text2.get("1.0", "end-1c"))
+    total_lines = len(lines) + pasted_text.count('\n')
+    total_characters = characters + len(pasted_text)
+
+    if total_lines > MAX_LINES_INSTRUCOES_SECOND_PAGE or total_characters > CHARACTER_LIMIT_SECOND_PAGE:
+        # Display a warning message
+        messagebox.showinfo("Limit Exceeded", "Pasted text exceeds the line or character limit.")
+        return "break"  # Prevent the paste operation
+
+    # Perform the regular input validation
+    validate_input_instrucoes_second_page(event)
+
+#-----------------------#-----------------------#-----------------------#-----------------------#-----------------------
+
+
+
+
+
 def set_character_limit(limit):
-    global character_limit
-    character_limit = limit
+    global CHARACTER_LIMIT
+    CHARACTER_LIMIT = limit
 
-character_limit = 215
  
 text_frame = ttk.LabelFrame(frame, text="Informações Adicionais")
 text_frame.grid(row=2, column=0, padx=20, pady=(10,5), sticky="nsew")
@@ -323,13 +391,17 @@ instrucoes_label.grid(row=0, column=4, padx=5, pady=5, sticky="w")
 instrucoes_text = tk.Text(text_frame, height=5, bg="white", wrap = 'word', font=("Arial", 10))
 instrucoes_text.grid(row=1, column=4, padx=5, pady=5, sticky="nsew")
 instrucoes_text.bind("<Key>", validate_input_instrucoes)
+instrucoes_text.bind("<KeyRelease>", validate_input_instrucoes)
+instrucoes_text.bind("<Control-v>", validate_paste_instrucoes)
 
 instrucoes_label2 = ttk.Label(text_frame, text="INTRUÇÕES (segunda página):", font=("Arial", 12, "bold"))
 instrucoes_label2.grid(row=2, column=4, padx=5, pady=5, sticky="w")
 
 instrucoes_text2 = tk.Text(text_frame, height=5, bg="white", wrap = 'word', font=("Arial", 10))
 instrucoes_text2.grid(row=3, column=4, padx=5, pady=5, sticky="nsew")
-
+instrucoes_text2.bind("<Key>", validate_input_instrucoes_second_page)
+instrucoes_text2.bind("<KeyRelease>", validate_input_instrucoes_second_page)
+instrucoes_text2.bind("<Control-v>", validate_paste_instrucoes_second_page)
 
 button_frame = tk.Frame(window)
 button_frame.pack(pady=10)
@@ -343,6 +415,9 @@ criar_button.pack(side="left", padx=10)
 
 instrucoes_text.bind("<KeyPress>", validate_input_instrucoes)
 instrucoes_text.bind("<KeyRelease>", validate_input_instrucoes)
+
+instrucoes_text2.bind("<KeyPress>", validate_input_instrucoes_second_page)
+instrucoes_text2.bind("<KeyRelease>", validate_input_instrucoes_second_page)
 
 
 como_text.bind("<KeyPress>", validate_input_como)
