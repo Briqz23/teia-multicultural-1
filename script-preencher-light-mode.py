@@ -1,4 +1,3 @@
-#SEM TTKBOOSTRAP
 import io
 import textwrap
 from urllib.request import urlopen
@@ -122,27 +121,27 @@ def criar_primeira_pagina():
                 draw.text((332, y), wrapped_line, font=firstFont, fill='black')
                 y += firstFont.getbbox(wrapped_line)[1] + 35
             y+=35
-        y += 35  
+         
     messagebox.showinfo("Sucesso", "Arquivo criado com sucesso! Eles serão armazenados na pasta ABRIR > fichas")
 
     def wrap_text(text, width):
         return textwrap.wrap(text, width=width)
-
-    wrapped_o_que = wrap_text(strings[7], 74)
+    
+    wrapped_o_que = wrap_text_with_line_breaks(strings[7], 74)
 
     o_que_y = 820
     for line in wrapped_o_que:
         draw.text((350, o_que_y), line, font=firstFont, fill='black')
         o_que_y += 35
 
-    wrapped_pra_que = wrap_text(strings[8], 74)
+    wrapped_pra_que = wrap_text_with_line_breaks(strings[8], 74)
 
     pra_que_y = 980
     for line in wrapped_pra_que:
         draw.text((350, pra_que_y), line, font=firstFont, fill='black')
         pra_que_y += 35
 
-    wrapped_como = wrap_text(strings[9], 74)
+    wrapped_como = wrap_text_with_line_breaks(strings[9], 74)
 
     como_y = 1120
     for line in wrapped_como:
@@ -155,6 +154,15 @@ def criar_primeira_pagina():
     img.save("primeira-pagina.png", dpi=(300, 300))
 
     return strings
+def wrap_text_with_line_breaks(text, width):
+    lines = text.split("\n")  # Split the text into lines
+    wrapped_lines = []
+
+    for line in lines:
+        wrapped = textwrap.wrap(line, width=width)
+        wrapped_lines.extend(wrapped)
+
+    return wrapped_lines
 
 
 
@@ -165,7 +173,6 @@ def criar_segunda_pagina():
     firstFont = ImageFont.truetype(normal_font, 30)
 
     instrucoes2 = instrucoes_text2.get("1.0", "end")
-    wrapped_instrucoes = textwrap.wrap(instrucoes2, width=50)
     lines = instrucoes2.splitlines()
 
     img = Image.open("templates/other-1.png")
@@ -187,7 +194,7 @@ def criar_segunda_pagina():
 
 
 
-# Crie a janela principal
+# Crie a janela principal   
 window = ThemedTk(theme="breeze") 
 window.title("Preenchedor de ficha")
 
@@ -269,94 +276,33 @@ def validate_input_o_que(event):
     return True
 
 
-#---------------------------------------------------------------------------------
-
-MAX_LINES_INSTRUCOES = 7
-CHARACTER_LIMIT= 600
-# dsdsdsd 
-def validate_input_instrucoes(event):
-    lines = instrucoes_text.get("1.0", "end-1c").split('\n')
-    characters = len(instrucoes_text.get("1.0", "end-1c"))
-    current_line = int(instrucoes_text.index("insert").split('.')[0])
-
-    if len(lines) > MAX_LINES_INSTRUCOES or characters > CHARACTER_LIMIT:
-        
-        if len(lines) > MAX_LINES_INSTRUCOES:
-            instrucoes_text.delete(f"{current_line}.0", "end")
-
-        
-        if characters > CHARACTER_LIMIT:
-            instrucoes_text.delete("end-2c")
-
-        
-        instrucoes_text.config(state="disabled")
-        messagebox.showinfo("Limite!", "Você chegou ao limite da primeira página. Para dar continuação, use a caixa de texto abaixo.")
-
-    else:
-        instrucoes_text.config(state="normal")  
-
-    return True
-
-def validate_paste_instrucoes(event):
-    pasted_text = event.widget.selection_get(selection="CLIPBOARD")
-    lines = instrucoes_text.get("1.0", "end-1c").split('\n')
-    characters = len(instrucoes_text.get("1.0", "end-1c"))
-    total_lines = len(lines) + pasted_text.count('\n')
-    total_characters = characters + len(pasted_text)
-
-    if total_lines > MAX_LINES_INSTRUCOES or total_characters > CHARACTER_LIMIT:
-        # Display a warning message
-        messagebox.showinfo("Limit Exceeded", "Pasted text exceeds the line or character limit.")
-        return "break"  # Prevent the paste operation
-
-    # Perform the regular input validation
-    validate_input_instrucoes(event)
-#-----------------------#-----------------------#-----------------------#-----------------------#-----------------------
-MAX_LINES_INSTRUCOES_SECOND_PAGE = 24
-CHARACTER_LIMIT_SECOND_PAGE = 1400
-# dsdsdsd 
-def validate_input_instrucoes_second_page(event):
-    lines = instrucoes_text2.get("1.0", "end-1c").split('\n')
-    characters = len(instrucoes_text2.get("1.0", "end-1c"))
-    current_line = int(instrucoes_text2.index("insert").split('.')[0])
-
-    if len(lines) > MAX_LINES_INSTRUCOES_SECOND_PAGE or characters > CHARACTER_LIMIT_SECOND_PAGE:
-        
-        if len(lines) > MAX_LINES_INSTRUCOES_SECOND_PAGE:
-            instrucoes_text2.delete(f"{current_line}.0", "end")
-
-        
-        if characters > CHARACTER_LIMIT_SECOND_PAGE:
-            instrucoes_text2.delete("end-2c")
-
-        
-        instrucoes_text2.config(state="disabled")
-        messagebox.showinfo("Limite!", "Você chegou ao limite da primeira página. Para dar continuação, use a caixa de texto abaixo.")
-
-    else:
-        instrucoes_text2.config(state="normal")  
-
-    return True
-
-def validate_paste_instrucoes_second_page(event):
-    pasted_text = event.widget.selection_get(selection="CLIPBOARD")
-    lines = instrucoes_text2.get("1.0", "end-1c").split('\n')
-    characters = len(instrucoes_text2.get("1.0", "end-1c"))
-    total_lines = len(lines) + pasted_text.count('\n')
-    total_characters = characters + len(pasted_text)
-
-    if total_lines > MAX_LINES_INSTRUCOES_SECOND_PAGE or total_characters > CHARACTER_LIMIT_SECOND_PAGE:
-        # Display a warning message
-        messagebox.showinfo("Limit Exceeded", "Pasted text exceeds the line or character limit.")
-        return "break"  # Prevent the paste operation
-
-    # Perform the regular input validation
-    validate_input_instrucoes_second_page(event)
-
 #-----------------------#-----------------------#-----------------------#-----------------------#-----------------------
 
+def validate_input_generico(event, input_widget, max_lines, max_characters):
+    if event.widget == input_widget:
+        text = input_widget.get("1.0", "end-1c")
+        lines = text.split('\n')
+        characters = len(text)
+
+        if len(lines) > max_lines or characters > max_characters:
+            if event.keysym == "BackSpace":
+                return None  # Allow deletion of characters when the limit is exceeded
+
+            messagebox.showinfo("Limite!", "Você chegou ao limite da primeira página. Para dar continuação, use a caixa de texto abaixo.")
+            return "break"  # Prevent further input
+
+    return None
 
 
+def validate_paste_generico(event, input_widget, max_characters):
+    pasted_text = event.widget.clipboard_get()
+    if len(pasted_text) > max_characters:
+        messagebox.showinfo("Limite!", "O texto colado excede o limite.")
+        return "break"  
+    else:
+        return None
+
+#-----------------------#-----------------------#-----------------------#-----------------------#-----------------------
 
 
 def set_character_limit(limit):
@@ -390,18 +336,13 @@ instrucoes_label.grid(row=0, column=4, padx=5, pady=5, sticky="w")
 
 instrucoes_text = tk.Text(text_frame, height=5, bg="white", wrap = 'word', font=("Arial", 10))
 instrucoes_text.grid(row=1, column=4, padx=5, pady=5, sticky="nsew")
-instrucoes_text.bind("<Key>", validate_input_instrucoes)
-instrucoes_text.bind("<KeyRelease>", validate_input_instrucoes)
-instrucoes_text.bind("<Control-v>", validate_paste_instrucoes)
+
 
 instrucoes_label2 = ttk.Label(text_frame, text="INTRUÇÕES (segunda página):", font=("Arial", 12, "bold"))
 instrucoes_label2.grid(row=2, column=4, padx=5, pady=5, sticky="w")
 
 instrucoes_text2 = tk.Text(text_frame, height=5, bg="white", wrap = 'word', font=("Arial", 10))
 instrucoes_text2.grid(row=3, column=4, padx=5, pady=5, sticky="nsew")
-instrucoes_text2.bind("<Key>", validate_input_instrucoes_second_page)
-instrucoes_text2.bind("<KeyRelease>", validate_input_instrucoes_second_page)
-instrucoes_text2.bind("<Control-v>", validate_paste_instrucoes_second_page)
 
 button_frame = tk.Frame(window)
 button_frame.pack(pady=10)
@@ -412,22 +353,26 @@ sair_button.pack(side="left", padx=10)
 criar_button = tk.Button(button_frame, text="CRIAR", command=criar_tudo, bg="#90EE90", relief="solid", bd=0)
 criar_button.pack(side="left", padx=10)
 
+instrucoes_text.bind("<Key>", lambda event: validate_input_generico(event, instrucoes_text, 40, 770))
+instrucoes_text.bind("<KeyRelease>", lambda event: validate_input_generico(event, instrucoes_text, 40, 770))
+instrucoes_text.bind("<Control-v>", lambda event: validate_paste_generico(event, instrucoes_text, 770))
 
-instrucoes_text.bind("<KeyPress>", validate_input_instrucoes)
-instrucoes_text.bind("<KeyRelease>", validate_input_instrucoes)
-
-instrucoes_text2.bind("<KeyPress>", validate_input_instrucoes_second_page)
-instrucoes_text2.bind("<KeyRelease>", validate_input_instrucoes_second_page)
+instrucoes_text2.bind("<Key>", lambda event: validate_input_generico(event, instrucoes_text2, 22, 3340))
+instrucoes_text2.bind("<KeyRelease>", lambda event: validate_input_generico(event, instrucoes_text2, 22, 3430))
+instrucoes_text2.bind("<Control-v>", lambda event: validate_paste_generico(event, instrucoes_text2, 4344))
 
 
-como_text.bind("<KeyPress>", validate_input_como)
-como_text.bind("<KeyRelease>", validate_input_como)
+como_text.bind("<Key>", lambda event: validate_input_generico(event, como_text, 2, 200))
+como_text.bind("<KeyRelease>", lambda event: validate_input_generico(event, como_text, 2, 200))
+como_text.bind("<Control-v>", lambda event: validate_paste_generico(event, como_text, 200))
 
-pra_que_text.bind("<KeyPress>", validate_input_pra_que)
-pra_que_text.bind("<KeyRelease>", validate_input_pra_que)
+pra_que_text.bind("<Key>", lambda event: validate_input_generico(event, pra_que_text, 2, 200))
+pra_que_text.bind("<KeyRelease>", lambda event: validate_input_generico(event, pra_que_text, 2, 200))
+pra_que_text.bind("<Control-v>", lambda event: validate_paste_generico(event, o_que_text, 200))
 
-o_que_text.bind("<KeyPress>", validate_input_o_que)
-o_que_text.bind("<KeyRelease>", validate_input_o_que)
+o_que_text.bind("<Key>", lambda event: validate_input_generico(event, o_que_text, 2, 200))
+o_que_text.bind("<KeyRelease>", lambda event: validate_input_generico(event, o_que_text, 2, 200))
+o_que_text.bind("<Control-v>", lambda event: validate_paste_generico(event, o_que_text, 200))
 
 
 frame.grid_rowconfigure(0, weight=1)
