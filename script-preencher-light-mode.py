@@ -120,7 +120,7 @@ def criar_primeira_pagina():
             for wrapped_line in wrapped_lines:
                 draw.text((332, y), wrapped_line, font=firstFont, fill='black')
                 y += firstFont.getbbox(wrapped_line)[1] + 35
-            y+=35
+            
          
     messagebox.showinfo("Sucesso", "Arquivo criado com sucesso! Eles serão armazenados na pasta ABRIR > fichas")
 
@@ -179,19 +179,7 @@ def criar_segunda_pagina():
     draw = ImageDraw.Draw(img)
     y=100
     wrapped_instrucoes = textwrap.wrap(instrucoes2, width=50)
-
-    for line in lines:
-        if line.strip():  
-            wrapped_lines = textwrap.wrap(line, width=85)
-
-            for wrapped_line in wrapped_lines:
-                draw.text((332, y), wrapped_line, font=firstFont, fill='black')
-                y += firstFont.getbbox(wrapped_line)[1] + 35
-        y+=35
-    y+=35
-    
     img.save("segunda-pagina.png", dpi=(300, 300))
-
 
 
 # Crie a janela principal   
@@ -362,16 +350,16 @@ instrucoes_text2.bind("<KeyRelease>", lambda event: validate_input_generico(even
 instrucoes_text2.bind("<Control-v>", lambda event: validate_paste_generico(event, instrucoes_text2, 4344))
 
 
-como_text.bind("<Key>", lambda event: validate_input_generico(event, como_text, 2, 200))
-como_text.bind("<KeyRelease>", lambda event: validate_input_generico(event, como_text, 2, 200))
+como_text.bind("<Key>", lambda event: validate_input_generico(event, como_text, 3, 200))
+como_text.bind("<KeyRelease>", lambda event: validate_input_generico(event, como_text, 3, 200))
 como_text.bind("<Control-v>", lambda event: validate_paste_generico(event, como_text, 200))
 
-pra_que_text.bind("<Key>", lambda event: validate_input_generico(event, pra_que_text, 2, 200))
-pra_que_text.bind("<KeyRelease>", lambda event: validate_input_generico(event, pra_que_text, 2, 200))
+pra_que_text.bind("<Key>", lambda event: validate_input_generico(event, pra_que_text, 3, 200))
+pra_que_text.bind("<KeyRelease>", lambda event: validate_input_generico(event, pra_que_text, 3, 200))
 pra_que_text.bind("<Control-v>", lambda event: validate_paste_generico(event, o_que_text, 200))
 
-o_que_text.bind("<Key>", lambda event: validate_input_generico(event, o_que_text, 2, 200))
-o_que_text.bind("<KeyRelease>", lambda event: validate_input_generico(event, o_que_text, 2, 200))
+o_que_text.bind("<Key>", lambda event: validate_input_generico(event, o_que_text, 3, 200))
+o_que_text.bind("<KeyRelease>", lambda event: validate_input_generico(event, o_que_text, 3, 200))
 o_que_text.bind("<Control-v>", lambda event: validate_paste_generico(event, o_que_text, 200))
 
 
