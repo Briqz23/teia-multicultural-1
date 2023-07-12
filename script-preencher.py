@@ -17,42 +17,69 @@ def validate_numbers(text):
 def sair():
     window.destroy()
 
-def criar_tudo():
-    strings = criar_primeira_pagina()
-    criar_segunda_pagina()
 
-    pdf_files = ['primeira-pagina.png', 'segunda-pagina.png']
-
-    pdf_writer = PyPDF2.PdfWriter()
-
-    for file_path in pdf_files:
-        if file_path.endswith('.pdf'):
-            with open(file_path, 'rb') as pdf_file:
-                pdf_reader = PyPDF2.PdfReader(pdf_file)
-                for page in pdf_reader.pages:
-                    pdf_writer.add_page(page)
-        elif file_path.endswith('.png'):
-            image = Image.open(file_path)
-            pdf_path = f"{file_path}.pdf"
-            image.save(pdf_path, "PDF", resolution=200)  
-            with open(pdf_path, 'rb') as pdf_file:
-                pdf_reader = PyPDF2.PdfReader(pdf_file)
-                for page in pdf_reader.pages:
-                    pdf_writer.add_page(page)
-            os.remove(pdf_path)
-
-    current_date = datetime.now().strftime("%d_%m_%Y")
-    output_folder = "ABRIR/fichas"
     
-    file_name = f"FICHA-{strings[1]}-{datetime.now().strftime('%d-%m_%Hh%M')}.pdf"
-    output_path = os.path.join(output_folder, file_name)
+def criar_tudo():
+    flag = True
+    instrucoes = instrucoes_text.get("1.0", "end")
+    num_chars = len(instrucoes)
+    num_linebreaks = instrucoes.count('\n')
+    num_lines = num_chars // 65 + num_linebreaks
+    
+    if num_lines > 18:
+        messagebox.showwarning("Limite de linhas excedido", "O texto inserido para as instruções da primeira página pode exceder o limite de linhas. Por favor, revise o texto.")
+        flag = False
+        
+    
+ 
+    instrucoes2 = instrucoes_text2.get("1.0", "end")
+    num_chars2 = len(instrucoes2)
+    num_linebreaks2 = instrucoes2.count('\n')
+    num_lines2 = num_chars2 // 65 + num_linebreaks2
+    
+    if num_lines2 > 65:
+        messagebox.showwarning("Limite de linhas excedido", "O texto inserido para as instruções da segunda página pode exceder o limite de linhas. Por favor, revise o texto.")
+        flag = False
+        
+
+    if flag == True: 
+        
+        strings = criar_primeira_pagina()
+        criar_segunda_pagina()
+
+        pdf_files = ['primeira-pagina.png', 'segunda-pagina.png']
+
+        pdf_writer = PyPDF2.PdfWriter()
+
+        for file_path in pdf_files:
+            if file_path.endswith('.pdf'):
+                with open(file_path, 'rb') as pdf_file:
+                    pdf_reader = PyPDF2.PdfReader(pdf_file)
+                    for page in pdf_reader.pages:
+                        pdf_writer.add_page(page)
+            elif file_path.endswith('.png'):
+                image = Image.open(file_path)
+                pdf_path = f"{file_path}.pdf"
+                image.save(pdf_path, "PDF", resolution=200)  
+                with open(pdf_path, 'rb') as pdf_file:
+                    pdf_reader = PyPDF2.PdfReader(pdf_file)
+                    for page in pdf_reader.pages:
+                        pdf_writer.add_page(page)
+                os.remove(pdf_path)
+
+        current_date = datetime.now().strftime("%d_%m_%Y")
+        output_folder = "ABRIR/fichas"
+        
+        file_name = f"FICHA-{strings[1]}-{datetime.now().strftime('%d-%m_%Hh%M')}.pdf"
+        output_path = os.path.join(output_folder, file_name)
 
 
-    with open(output_path, 'wb') as output_file:
-        pdf_writer.write(output_file)
+        with open(output_path, 'wb') as output_file:
+            pdf_writer.write(output_file)
 
-    os.startfile(output_path)
-
+        os.startfile(output_path)
+        
+    
 def criar_primeira_pagina():
 
     url_font = 'https://github.com/matomo-org/travis-scripts/blob/master/fonts/Arial.ttf?raw=True'
@@ -155,7 +182,7 @@ def criar_primeira_pagina():
 
     return strings
 def wrap_text_with_line_breaks(text, width):
-    lines = text.split("\n")  # Split the text into lines
+    lines = text.split("\n") 
     wrapped_lines = []
 
     for line in lines:
@@ -166,6 +193,8 @@ def wrap_text_with_line_breaks(text, width):
 
 
 
+import textwrap
+
 def criar_segunda_pagina():
     url_font = 'https://github.com/matomo-org/travis-scripts/blob/master/fonts/Arial.ttf?raw=True'
     normal_font = io.BytesIO(urlopen(url_font).read())
@@ -173,14 +202,17 @@ def criar_segunda_pagina():
     firstFont = ImageFont.truetype(normal_font, 30)
 
     instrucoes2 = instrucoes_text2.get("1.0", "end")
-    lines = instrucoes2.splitlines()
+    wrapped_instrucoes = textwrap.wrap(instrucoes2, width=80)
 
     img = Image.open("templates/other-1.png")
     draw = ImageDraw.Draw(img)
-    y=100
-    wrapped_instrucoes = textwrap.wrap(instrucoes2, width=50)
-    img.save("segunda-pagina.png", dpi=(300, 300))
 
+    y = 100
+    for line in wrapped_instrucoes:
+        draw.text((350, y), line, font=firstFont, fill='black')
+        y += 35
+
+    img.save("segunda-pagina.png", dpi=(300, 300))
 
 # Crie a janela principal   
 window = ThemedTk(theme="breeze") 
@@ -341,13 +373,13 @@ sair_button.pack(side="left", padx=10)
 criar_button = tk.Button(button_frame, text="CRIAR", command=criar_tudo, bg="#90EE90", relief="solid", bd=0)
 criar_button.pack(side="left", padx=10)
 
-instrucoes_text.bind("<Key>", lambda event: validate_input_generico(event, instrucoes_text, 40, 770))
-instrucoes_text.bind("<KeyRelease>", lambda event: validate_input_generico(event, instrucoes_text, 40, 770))
-instrucoes_text.bind("<Control-v>", lambda event: validate_paste_generico(event, instrucoes_text, 770))
+instrucoes_text.bind("<Key>", lambda event: validate_input_generico(event, instrucoes_text, 40, 1300))
+instrucoes_text.bind("<KeyRelease>", lambda event: validate_input_generico(event, instrucoes_text, 40, 1300))
+instrucoes_text.bind("<Control-v>", lambda event: validate_paste_generico(event, instrucoes_text, 1300))
 
-instrucoes_text2.bind("<Key>", lambda event: validate_input_generico(event, instrucoes_text2, 22, 3340))
-instrucoes_text2.bind("<KeyRelease>", lambda event: validate_input_generico(event, instrucoes_text2, 22, 3430))
-instrucoes_text2.bind("<Control-v>", lambda event: validate_paste_generico(event, instrucoes_text2, 4344))
+instrucoes_text2.bind("<Key>", lambda event: validate_input_generico(event, instrucoes_text2, 22, 4000))
+instrucoes_text2.bind("<KeyRelease>", lambda event: validate_input_generico(event, instrucoes_text2, 22, 4000))
+instrucoes_text2.bind("<Control-v>", lambda event: validate_paste_generico(event, instrucoes_text2,4000 ))
 
 
 como_text.bind("<Key>", lambda event: validate_input_generico(event, como_text, 3, 200))
