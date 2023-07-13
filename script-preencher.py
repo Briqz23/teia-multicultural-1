@@ -17,8 +17,30 @@ def validate_numbers(text):
 def sair():
     window.destroy()
 
+def verifica_limite_v2():
 
+    instrucoes = instrucoes_text.get("1.0", "end")
+    num_chars = len(instrucoes)
+    num_linebreaks = instrucoes.count('\n')
+    num_lines = num_chars // 65 + num_linebreaks
     
+    if num_lines > 18:
+        messagebox.showwarning("Foi estimado que você atingiu o limite do primeiro bloco de instruções! Para continuar, use o segund bloco")
+
+        
+    
+ 
+    instrucoes2 = instrucoes_text2.get("1.0", "end")
+    num_chars2 = len(instrucoes2)
+    num_linebreaks2 = instrucoes2.count('\n')
+    num_lines2 = num_chars2 // 65 + num_linebreaks2
+    
+    if num_lines2 > 65:
+        messagebox.showwarning("Limite de linhas excedido para o segundo bloco de Instruções", "O texto inserido para as instruções da segunda página pode exceder o limite de linhas. Por favor, revise o texto.")
+
+        
+
+
 def criar_tudo():
     flag = True
     instrucoes = instrucoes_text.get("1.0", "end")
@@ -27,7 +49,8 @@ def criar_tudo():
     num_lines = num_chars // 65 + num_linebreaks
     
     if num_lines > 18:
-        messagebox.showwarning("Limite de linhas excedido", "O texto inserido para as instruções da primeira página pode exceder o limite de linhas. Por favor, revise o texto.")
+        messagebox.showwarning("Limite de linhas excedido", "O texto inserido para as instruções da primeira página pode"
+                               "exceder o limite de linhas. Por favor, revise o texto.")
         flag = False
         
     
@@ -299,6 +322,7 @@ def validate_input_o_que(event):
 #-----------------------#-----------------------#-----------------------#-----------------------#-----------------------
 
 def validate_input_generico(event, input_widget, max_lines, max_characters):
+    verifica_limite_v2()
     if event.widget == input_widget:
         text = input_widget.get("1.0", "end-1c")
         lines = text.split('\n')
@@ -306,10 +330,10 @@ def validate_input_generico(event, input_widget, max_lines, max_characters):
 
         if len(lines) > max_lines or characters > max_characters:
             if event.keysym == "BackSpace":
-                return None  # Allow deletion of characters when the limit is exceeded
+                return None  
 
             messagebox.showinfo("Limite!", "Você chegou ao limite da primeira página. Para dar continuação, use a caixa de texto abaixo.")
-            return "break"  # Prevent further input
+            return "break"  
 
     return None
 
@@ -351,14 +375,14 @@ como_label.grid(row=4, column=0, padx=5, pady=5, sticky="w")
 como_text = tk.Text(text_frame, height=4, bg="white", wrap = 'word', font=("Arial", 10))
 como_text.grid(row=5, column=0, padx=5, pady=5, sticky="nsew")
 
-instrucoes_label = ttk.Label(text_frame, text="INTRUÇÕES (primeira página):", font=("Arial", 12, "bold"))
+instrucoes_label = ttk.Label(text_frame, text="INSTRUÇÕES (primeira página):", font=("Arial", 12, "bold"))
 instrucoes_label.grid(row=0, column=4, padx=5, pady=5, sticky="w")
 
 instrucoes_text = tk.Text(text_frame, height=5, bg="white", wrap = 'word', font=("Arial", 10))
 instrucoes_text.grid(row=1, column=4, padx=5, pady=5, sticky="nsew")
 
 
-instrucoes_label2 = ttk.Label(text_frame, text="INTRUÇÕES (segunda página):", font=("Arial", 12, "bold"))
+instrucoes_label2 = ttk.Label(text_frame, text="INSTRUÇÕES (segunda página):", font=("Arial", 12, "bold"))
 instrucoes_label2.grid(row=2, column=4, padx=5, pady=5, sticky="w")
 
 instrucoes_text2 = tk.Text(text_frame, height=5, bg="white", wrap = 'word', font=("Arial", 10))
