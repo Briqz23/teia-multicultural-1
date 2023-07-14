@@ -22,23 +22,21 @@ def verifica_limite_v2():
     num_chars = len(instrucoes)
     num_linebreaks = len(instrucoes.splitlines()) - 1  # Subtract 1 for the last line
     num_lines = num_chars // 65 + num_linebreaks
- 
-    if num_lines > 18:
-        messagebox.showwarning("Limite atingido!", "Foi estimado que você atingiu o limite do primeiro bloco de instruções! Para continuar, use o segund bloco")
 
-        
-    
- 
+    if instrucoes_text.focus_get() == instrucoes_text and num_lines > 18:
+        messagebox.showwarning("Limite atingido!",
+                               "Foi estimado que você atingiu o limite do primeiro bloco de instruções! "
+                               "Para continuar, use o segundo bloco")
+
     instrucoes2 = instrucoes_text2.get("1.0", "end")
     num_chars2 = len(instrucoes2)
     num_linebreaks2 = len(instrucoes2.splitlines()) - 1  # Subtract 1 for the last line
     num_lines2 = num_chars2 // 65 + num_linebreaks2
 
-    if num_lines2 > 50:
-        messagebox.showwarning("Limite de linhas excedido para o segundo bloco de Instruções", "O texto inserido para as instruções da segunda página pode exceder o limite de linhas. Por favor, revise o texto.")
-
-        
-
+    if instrucoes_text2.focus_get() == instrucoes_text2 and num_lines2 > 50:
+        messagebox.showwarning("Limite de linhas excedido para o segundo bloco de Instruções",
+                               "O texto inserido para as instruções da segunda página pode exceder o limite de linhas. "
+                               "Por favor, revise o texto.")
 
 def criar_tudo():
 
@@ -334,7 +332,6 @@ def validate_input_o_que(event):
 
 
 #-----------------------#-----------------------#-----------------------#-----------------------#-----------------------
-
 def validate_input_generico(event, field_name, input_widget, max_lines, max_characters):
     excluded_keys = ["BackSpace", "Shift_L", "Shift_R", "Delete"]
     if event.keysym in excluded_keys:
@@ -350,11 +347,15 @@ def validate_input_generico(event, field_name, input_widget, max_lines, max_char
             if event.keysym in excluded_keys:
                 return None  
             error_title = f"Erro em {field_name}"
-            error_message =  f"Você chegou ao limite de 'enters' ou de caracteres! em {field_name}"
+            error_message = f"Você chegou ao limite de 'enters' ou de caracteres em {field_name}!"
             messagebox.showinfo(error_title, error_message)
+            input_widget.delete("end-1c", "end")  # Delete the entered text
             return "break"   
 
     return None
+
+
+
 
 def validate_input_o_que(event):
     max_characters = 200  
