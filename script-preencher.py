@@ -34,7 +34,7 @@ def verifica_limite_v2():
     num_linebreaks2 = len(instrucoes2.splitlines()) - 1  # Subtract 1 for the last line
     num_lines2 = num_chars2 // 65 + num_linebreaks2
 
-    if num_lines2 > 65:
+    if num_lines2 > 50:
         messagebox.showwarning("Limite de linhas excedido para o segundo bloco de Instruções", "O texto inserido para as instruções da segunda página pode exceder o limite de linhas. Por favor, revise o texto.")
 
         
@@ -170,26 +170,26 @@ def criar_primeira_pagina():
     def wrap_text(text, width):
         return textwrap.wrap(text, width=width)
     
-    wrapped_o_que = wrap_text_with_line_breaks(strings[7], 74)
+    wrapped_o_que = wrap_text_with_line_breaks(strings[7], 82)
 
     o_que_y = 820
     for line in wrapped_o_que:
         draw.text((350, o_que_y), line, font=firstFont, fill='black')
-        o_que_y += 35
+        o_que_y += 30
 
-    wrapped_pra_que = wrap_text_with_line_breaks(strings[8], 74)
+    wrapped_pra_que = wrap_text_with_line_breaks(strings[8], 82)
 
     pra_que_y = 980
     for line in wrapped_pra_que:
         draw.text((350, pra_que_y), line, font=firstFont, fill='black')
-        pra_que_y += 35
+        pra_que_y += 30
 
-    wrapped_como = wrap_text_with_line_breaks(strings[9], 74)
+    wrapped_como = wrap_text_with_line_breaks(strings[9], 82)
 
     como_y = 1120
     for line in wrapped_como:
         draw.text((350, como_y), line, font=firstFont, fill='black')
-        como_y += 35
+        como_y += 30
 
 
     img.save("primeira-pagina.png", dpi=(300, 300))
@@ -204,7 +204,7 @@ def wrap_text_with_line_breaks(text, width):
         if line.strip():
             wrapped = textwrap.wrap(line, width=width)
             wrapped_lines.extend(wrapped)
-            wrapped_lines.append('sd')  # Add an empty line for each line break
+            wrapped_lines.append('')  # Add an empty line for each line break
 
     return wrapped_lines
 
@@ -335,8 +335,9 @@ def validate_input_o_que(event):
 
 #-----------------------#-----------------------#-----------------------#-----------------------#-----------------------
 
-def validate_input_generico(event, input_widget, max_lines, max_characters):
-    if event.keysym == "BackSpace":
+def validate_input_generico(event, field_name, input_widget, max_lines, max_characters):
+    excluded_keys = ["BackSpace", "Shift_L", "Shift_R", "Delete"]
+    if event.keysym in excluded_keys:
         return None
     
     verifica_limite_v2()
@@ -346,11 +347,60 @@ def validate_input_generico(event, input_widget, max_lines, max_characters):
         characters = len(text)
 
         if len(lines) > max_lines or characters > max_characters:
-            if event.keysym == "BackSpace":
+            if event.keysym in excluded_keys:
                 return None  
+            error_title = f"Erro em {field_name}"
+            error_message =  f"Você chegou ao limite de 'enters' ou de caracteres! em {field_name}"
+            messagebox.showinfo(error_title, error_message)
+            return "break"   
 
-            messagebox.showinfo("Limite!", "Você chegou ao limite da primeira página. Para dar continuação, use a caixa de texto abaixo.")
-            return "break"  
+    return None
+
+def validate_input_o_que(event):
+    max_characters = 200  
+    max_linebreaks = 1 
+    if event.widget == o_que_text:
+        text = o_que_text.get("1.0", "end-1c")
+        characters = len(text)
+        linebreaks = text.count('\n')
+
+        if characters > max_characters or linebreaks > max_linebreaks:
+            if event.keysym in ["BackSpace", "Shift_L", "Shift_R", "Delete"]:
+                return None
+            messagebox.showinfo("Limite!", "Limite de caracteres ou quebras de linha atingido para o campo 'O QUE?'.")
+            return "break"
+
+    return None
+
+def validate_input_pra_que(event):
+    max_characters = 200  
+    max_linebreaks = 1  
+    if event.widget == pra_que_text:
+        text = pra_que_text.get("1.0", "end-1c")
+        characters = len(text)
+        linebreaks = text.count('\n')
+
+        if characters > max_characters or linebreaks > max_linebreaks:
+            if event.keysym in ["BackSpace", "Shift_L", "Shift_R", "Delete"]:
+                return None
+            messagebox.showinfo("Limite!", "Limite de caracteres ou quebras de linha atingido para o campo 'PRA QUÊ?'.")
+            return "break"
+
+    return None
+
+def validate_input_como(event):
+    max_characters = 200  
+    max_linebreaks = 1  
+    if event.widget == como_text:
+        text = como_text.get("1.0", "end-1c")
+        characters = len(text)
+        linebreaks = text.count('\n')
+
+        if characters > max_characters or linebreaks > max_linebreaks:
+            if event.keysym in ["BackSpace", "Shift_L", "Shift_R", "Delete"]:
+                return None
+            messagebox.showinfo("Limite!", "Limite de caracteres ou quebras de linha atingido para o campo 'COMO?'.")
+            return "break"
 
     return None
 
@@ -414,25 +464,25 @@ sair_button.pack(side="left", padx=10)
 criar_button = tk.Button(button_frame, text="CRIAR", command=criar_tudo, bg="#90EE90", relief="solid", bd=0)
 criar_button.pack(side="left", padx=10)
 
-instrucoes_text.bind("<Key>", lambda event: validate_input_generico(event, instrucoes_text, 40, 1300))
-instrucoes_text.bind("<KeyRelease>", lambda event: validate_input_generico(event, instrucoes_text, 40, 1300))
+instrucoes_text.bind("<Key>", lambda event: validate_input_generico(event,"Campo Instruções", instrucoes_text, 40, 1300))
+instrucoes_text.bind("<KeyRelease>", lambda event: validate_input_generico(event,"Campo Instruções", instrucoes_text, 40, 1300))
 instrucoes_text.bind("<Control-v>", lambda event: validate_paste_generico(event, instrucoes_text, 1300))
 
-instrucoes_text2.bind("<Key>", lambda event: validate_input_generico(event, instrucoes_text2, 65, 4000))
-instrucoes_text2.bind("<KeyRelease>", lambda event: validate_input_generico(event, instrucoes_text2,65, 4000))
+instrucoes_text2.bind("<Key>", lambda event: validate_input_generico(event,"Segundo Campo de Instruções", instrucoes_text2, 60, 4000))
+instrucoes_text2.bind("<KeyRelease>", lambda event: validate_input_generico(event, "Segundo Campo de Instruções",instrucoes_text2,60, 4000))
 instrucoes_text2.bind("<Control-v>", lambda event: validate_paste_generico(event, instrucoes_text2, 4000))
 
 
-como_text.bind("<Key>", lambda event: validate_input_generico(event, como_text, 2, 200))
-como_text.bind("<KeyRelease>", lambda event: validate_input_generico(event, como_text, 2, 200))
+como_text.bind("<Key>", validate_input_como)
+como_text.bind("<KeyRelease>", validate_input_como)
 como_text.bind("<Control-v>", lambda event: validate_paste_generico(event, como_text, 200))
 
-pra_que_text.bind("<Key>", lambda event: validate_input_generico(event, pra_que_text, 2, 200))
-pra_que_text.bind("<KeyRelease>", lambda event: validate_input_generico(event, pra_que_text, 2, 200))
+pra_que_text.bind("<Key>", validate_input_pra_que)
+pra_que_text.bind("<KeyRelease>", validate_input_pra_que)
 pra_que_text.bind("<Control-v>", lambda event: validate_paste_generico(event, pra_que_text, 200))
 
-o_que_text.bind("<Key>", lambda event: validate_input_generico(event, o_que_text, 2, 200))
-o_que_text.bind("<KeyRelease>", lambda event: validate_input_generico(event, o_que_text, 2, 200))
+o_que_text.bind("<Key>", validate_input_o_que)
+o_que_text.bind("<KeyRelease>", validate_input_o_que)
 o_que_text.bind("<Control-v>", lambda event: validate_paste_generico(event, o_que_text, 200))
 
 
