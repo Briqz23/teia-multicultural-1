@@ -18,23 +18,22 @@ def sair():
     window.destroy()
 
 def verifica_limite_v2():
-
     instrucoes = instrucoes_text.get("1.0", "end")
     num_chars = len(instrucoes)
-    num_linebreaks = instrucoes.count('\n')
+    num_linebreaks = len(instrucoes.splitlines()) - 1  # Subtract 1 for the last line
     num_lines = num_chars // 65 + num_linebreaks
-    
+ 
     if num_lines > 18:
-        messagebox.showwarning("Foi estimado que você atingiu o limite do primeiro bloco de instruções! Para continuar, use o segund bloco")
+        messagebox.showwarning("Limite atingido!", "Foi estimado que você atingiu o limite do primeiro bloco de instruções! Para continuar, use o segund bloco")
 
         
     
  
     instrucoes2 = instrucoes_text2.get("1.0", "end")
     num_chars2 = len(instrucoes2)
-    num_linebreaks2 = instrucoes2.count('\n')
+    num_linebreaks2 = len(instrucoes2.splitlines()) - 1  # Subtract 1 for the last line
     num_lines2 = num_chars2 // 65 + num_linebreaks2
-    
+
     if num_lines2 > 65:
         messagebox.showwarning("Limite de linhas excedido para o segundo bloco de Instruções", "O texto inserido para as instruções da segunda página pode exceder o limite de linhas. Por favor, revise o texto.")
 
@@ -42,65 +41,42 @@ def verifica_limite_v2():
 
 
 def criar_tudo():
-    flag = True
-    instrucoes = instrucoes_text.get("1.0", "end")
-    num_chars = len(instrucoes)
-    num_linebreaks = instrucoes.count('\n')
-    num_lines = num_chars // 65 + num_linebreaks
+
     
-    if num_lines > 18:
-        messagebox.showwarning("Limite de linhas excedido", "O texto inserido para as instruções da primeira página pode"
-                               "exceder o limite de linhas. Por favor, revise o texto.")
-        flag = False
-        
+    strings = criar_primeira_pagina()
+    criar_segunda_pagina()
+
+    pdf_files = ['primeira-pagina.png', 'segunda-pagina.png']
+
+    pdf_writer = PyPDF2.PdfWriter()
+
+    for file_path in pdf_files:
+        if file_path.endswith('.pdf'):
+            with open(file_path, 'rb') as pdf_file:
+                pdf_reader = PyPDF2.PdfReader(pdf_file)
+                for page in pdf_reader.pages:
+                    pdf_writer.add_page(page)
+        elif file_path.endswith('.png'):
+            image = Image.open(file_path)
+            pdf_path = f"{file_path}.pdf"
+            image.save(pdf_path, "PDF", resolution=200)  
+            with open(pdf_path, 'rb') as pdf_file:
+                pdf_reader = PyPDF2.PdfReader(pdf_file)
+                for page in pdf_reader.pages:
+                    pdf_writer.add_page(page)
+            os.remove(pdf_path)
+
+    current_date = datetime.now().strftime("%d_%m_%Y")
+    output_folder = "ABRIR/fichas"
     
- 
-    instrucoes2 = instrucoes_text2.get("1.0", "end")
-    num_chars2 = len(instrucoes2)
-    num_linebreaks2 = instrucoes2.count('\n')
-    num_lines2 = num_chars2 // 65 + num_linebreaks2
-    
-    if num_lines2 > 65:
-        messagebox.showwarning("Limite de linhas excedido", "O texto inserido para as instruções da segunda página pode exceder o limite de linhas. Por favor, revise o texto.")
-        flag = False
-        
-
-    if flag == True: 
-        
-        strings = criar_primeira_pagina()
-        criar_segunda_pagina()
-
-        pdf_files = ['primeira-pagina.png', 'segunda-pagina.png']
-
-        pdf_writer = PyPDF2.PdfWriter()
-
-        for file_path in pdf_files:
-            if file_path.endswith('.pdf'):
-                with open(file_path, 'rb') as pdf_file:
-                    pdf_reader = PyPDF2.PdfReader(pdf_file)
-                    for page in pdf_reader.pages:
-                        pdf_writer.add_page(page)
-            elif file_path.endswith('.png'):
-                image = Image.open(file_path)
-                pdf_path = f"{file_path}.pdf"
-                image.save(pdf_path, "PDF", resolution=200)  
-                with open(pdf_path, 'rb') as pdf_file:
-                    pdf_reader = PyPDF2.PdfReader(pdf_file)
-                    for page in pdf_reader.pages:
-                        pdf_writer.add_page(page)
-                os.remove(pdf_path)
-
-        current_date = datetime.now().strftime("%d_%m_%Y")
-        output_folder = "ABRIR/fichas"
-        
-        file_name = f"FICHA-{strings[1]}-{datetime.now().strftime('%d-%m_%Hh%M')}.pdf"
-        output_path = os.path.join(output_folder, file_name)
+    file_name = f"FICHA-{strings[1]}-{datetime.now().strftime('%d-%m_%Hh%M')}.pdf"
+    output_path = os.path.join(output_folder, file_name)
 
 
-        with open(output_path, 'wb') as output_file:
-            pdf_writer.write(output_file)
+    with open(output_path, 'wb') as output_file:
+        pdf_writer.write(output_file)
 
-        os.startfile(output_path)
+    os.startfile(output_path)
         
     
 def criar_primeira_pagina():
@@ -126,11 +102,11 @@ def criar_primeira_pagina():
     o_que = o_que_text.get("1.0", "end-1c")
     pra_que = pra_que_text.get("1.0", "end-1c")
     como = como_text.get("1.0", "end-1c")
-    instrucoes = instrucoes_text.get("1.0", "end")
-    wrapped_instrucoes = textwrap.wrap(instrucoes, width=50)
+    instrucoes = instrucoes_text.get("1.0", "end").strip()
     lines = instrucoes.splitlines()
-
+    
     strings = [numero_atv, etapa, materia, turma, quinzenario, sequencia, conteudo, o_que, pra_que, como, instrucoes]
+    
     
     
     if etapa == "Definir":
@@ -143,6 +119,22 @@ def criar_primeira_pagina():
         img = Image.open("templates/ENTREGAR-1.png")
 
     draw = ImageDraw.Draw(img)
+
+    wrapped_lines = []
+    max_width = 80
+    y = 1363
+    for line in lines:
+        if line.strip():
+            wrapped_lines = textwrap.wrap(line, width=max_width)
+            for wrapped_line in wrapped_lines:
+                draw.text((332, y), wrapped_line, font=firstFont, fill='black')
+                y += firstFont.getbbox(wrapped_line)[1] + 35
+              # Add extra spacing between wrapped lines
+        else:
+            y += firstFont.getsize(" ")[1] + 35  # Adjust the vertical spacing for empty lines
+
+
+
 
     #numero_atv
     draw.text((1154, 225), strings[0], font=firstFont, fill='black')
@@ -162,10 +154,11 @@ def criar_primeira_pagina():
     #instrucoes
     
     y=1363
+    """
     for line in lines:
         if line.strip():
 
-            wrapped_lines = textwrap.wrap(line, width=85) 
+            wrapped_lines = textwrap.wrap(line, width=80) 
 
             for wrapped_line in wrapped_lines:
                 draw.text((332, y), wrapped_line, font=firstFont, fill='black')
@@ -173,7 +166,7 @@ def criar_primeira_pagina():
             
          
     messagebox.showinfo("Sucesso", "Arquivo criado com sucesso! Eles serão armazenados na pasta ABRIR > fichas")
-
+"""
     def wrap_text(text, width):
         return textwrap.wrap(text, width=width)
     
@@ -199,45 +192,66 @@ def criar_primeira_pagina():
         como_y += 35
 
 
-
-
     img.save("primeira-pagina.png", dpi=(300, 300))
 
     return strings
+
 def wrap_text_with_line_breaks(text, width):
-    lines = text.split("\n") 
+    lines = text.split('\n')
     wrapped_lines = []
 
     for line in lines:
-        wrapped = textwrap.wrap(line, width=width)
-        wrapped_lines.extend(wrapped)
+        if line.strip():
+            wrapped = textwrap.wrap(line, width=width)
+            wrapped_lines.extend(wrapped)
+            wrapped_lines.append('sd')  # Add an empty line for each line break
 
     return wrapped_lines
 
 
-
 import textwrap
-
 def criar_segunda_pagina():
     url_font = 'https://github.com/matomo-org/travis-scripts/blob/master/fonts/Arial.ttf?raw=True'
     normal_font = io.BytesIO(urlopen(url_font).read())
     normal_font.seek(0)
     firstFont = ImageFont.truetype(normal_font, 30)
 
-    instrucoes2 = instrucoes_text2.get("1.0", "end")
-    wrapped_instrucoes = textwrap.wrap(instrucoes2, width=80)
+    instrucoes2 = instrucoes_text2.get("1.0", "end-1c")
+    lines2 = instrucoes2.split("\n")
+    max_width = 80  # Adjust the maximum width based on your requirements
 
     img = Image.open("templates/other-1.png")
     draw = ImageDraw.Draw(img)
-
     y = 100
-    for line in wrapped_instrucoes:
-        draw.text((350, y), line, font=firstFont, fill='black')
-        y += 35
+    for line in lines2:
+        if line.strip():
+            wrapped_lines = textwrap.wrap(line, width=max_width)
+            for wrapped_line in wrapped_lines:
+                draw.text((350, y), wrapped_line, font=firstFont, fill='black')
+                y += firstFont.getbbox(wrapped_line)[1] + 35
+             # Add extra spacing between wrapped lines
+        else:
+            y += firstFont.getsize(" ")[1] + 35  # Adjust the vertical spacing for empty lines
+
 
     img.save("segunda-pagina.png", dpi=(300, 300))
 
-# Crie a janela principal   
+
+def wrap_text(text, max_width, font):
+    words = text.split()
+    if not words:
+        return []
+    lines = []
+    current_line = words[0]
+    for word in words[1:]:
+        if font.getsize(current_line + ' ' + word)[0] <= max_width:
+            current_line += ' ' + word
+        else:
+            lines.append(current_line)
+            current_line = word
+    lines.append(current_line)
+    return lines
+
 window = ThemedTk(theme="breeze") 
 window.title("Preenchedor de ficha")
 
@@ -250,7 +264,7 @@ style.configure("RoundedEntry.TEntry", borderwidth=0, relief="solid",
 frame = ttk.Frame(window)
 frame.pack(padx=20  )
 
-# Informações do usuário
+
 user_info_frame = ttk.LabelFrame(frame, text="")
 user_info_frame.grid(row=1, column=0, padx=20, pady=(10,20))
 
@@ -322,6 +336,9 @@ def validate_input_o_que(event):
 #-----------------------#-----------------------#-----------------------#-----------------------#-----------------------
 
 def validate_input_generico(event, input_widget, max_lines, max_characters):
+    if event.keysym == "BackSpace":
+        return None
+    
     verifica_limite_v2()
     if event.widget == input_widget:
         text = input_widget.get("1.0", "end-1c")
@@ -401,21 +418,21 @@ instrucoes_text.bind("<Key>", lambda event: validate_input_generico(event, instr
 instrucoes_text.bind("<KeyRelease>", lambda event: validate_input_generico(event, instrucoes_text, 40, 1300))
 instrucoes_text.bind("<Control-v>", lambda event: validate_paste_generico(event, instrucoes_text, 1300))
 
-instrucoes_text2.bind("<Key>", lambda event: validate_input_generico(event, instrucoes_text2, 22, 4000))
-instrucoes_text2.bind("<KeyRelease>", lambda event: validate_input_generico(event, instrucoes_text2, 22, 4000))
-instrucoes_text2.bind("<Control-v>", lambda event: validate_paste_generico(event, instrucoes_text2,4000 ))
+instrucoes_text2.bind("<Key>", lambda event: validate_input_generico(event, instrucoes_text2, 65, 4000))
+instrucoes_text2.bind("<KeyRelease>", lambda event: validate_input_generico(event, instrucoes_text2,65, 4000))
+instrucoes_text2.bind("<Control-v>", lambda event: validate_paste_generico(event, instrucoes_text2, 4000))
 
 
-como_text.bind("<Key>", lambda event: validate_input_generico(event, como_text, 3, 200))
-como_text.bind("<KeyRelease>", lambda event: validate_input_generico(event, como_text, 3, 200))
+como_text.bind("<Key>", lambda event: validate_input_generico(event, como_text, 2, 200))
+como_text.bind("<KeyRelease>", lambda event: validate_input_generico(event, como_text, 2, 200))
 como_text.bind("<Control-v>", lambda event: validate_paste_generico(event, como_text, 200))
 
-pra_que_text.bind("<Key>", lambda event: validate_input_generico(event, pra_que_text, 3, 200))
-pra_que_text.bind("<KeyRelease>", lambda event: validate_input_generico(event, pra_que_text, 3, 200))
-pra_que_text.bind("<Control-v>", lambda event: validate_paste_generico(event, o_que_text, 200))
+pra_que_text.bind("<Key>", lambda event: validate_input_generico(event, pra_que_text, 2, 200))
+pra_que_text.bind("<KeyRelease>", lambda event: validate_input_generico(event, pra_que_text, 2, 200))
+pra_que_text.bind("<Control-v>", lambda event: validate_paste_generico(event, pra_que_text, 200))
 
-o_que_text.bind("<Key>", lambda event: validate_input_generico(event, o_que_text, 3, 200))
-o_que_text.bind("<KeyRelease>", lambda event: validate_input_generico(event, o_que_text, 3, 200))
+o_que_text.bind("<Key>", lambda event: validate_input_generico(event, o_que_text, 2, 200))
+o_que_text.bind("<KeyRelease>", lambda event: validate_input_generico(event, o_que_text, 2, 200))
 o_que_text.bind("<Control-v>", lambda event: validate_paste_generico(event, o_que_text, 200))
 
 
